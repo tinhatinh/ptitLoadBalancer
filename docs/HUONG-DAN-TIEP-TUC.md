@@ -57,7 +57,7 @@ khác; cột `password_hash` chỉ chứa bcrypt.
 Đăng nhập bằng `POST /login.php` với ba trường `csrf`, `username`, `password`;
 `scripts/session_client.sh login` làm đúng việc đó và in ra node nhận phiên.
 
-## 2. Địa hình thực tế, đọc trước khi nổ súng
+## 2. Địa hình thực tế, đọc trước khi làm
 
 ```
 client01 192.168.240.20  --frontend-->  lb01 192.168.240.10 / 172.20.0.10
