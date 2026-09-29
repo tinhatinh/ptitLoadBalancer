@@ -26,6 +26,11 @@ sẽ cảnh báo.
 trị dev đủ để chạy. Chứng chỉ do `scripts/gen_certs.sh` sinh ra khi `lab.sh up`
 chạy lần đầu trên máy của bạn.
 
+Hai cổng của load balancer chỉ bind `127.0.0.1`, nên gọi từ máy khác trong cùng
+mạng sẽ không tới được. Muốn mở cho cả mạng khi demo, bỏ tiền tố `127.0.0.1:`
+trong `docker-compose.yml` rồi chạy lại `docker compose up -d --force-recreate
+lb01`.
+
 ## Đo đạc
 
 Ba nội dung đề bài yêu cầu và các phép đo bổ sung:
