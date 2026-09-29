@@ -16,12 +16,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($username === '' || $password === '') {
             $error = 'Cần nhập đầy đủ tên đăng nhập và mật khẩu.';
         } else {
-            $stmt = db()->prepare('SELECT id, username, password_hash, full_name, role FROM users WHERE username = ?');
-            $stmt->bind_param('s', $username);
-            $stmt->execute();
-            $row = $stmt->get_result()->fetch_assoc();
+            $row = null;
+            $db_error = false;
+            try {
+                $row = lookup_user($username);
+            } catch (Throwable) {
+                $db_error = true;
+            }
 
-            if ($row !== null && password_verify($password, $row['password_hash'])) {
+            if ($db_error) {
+                // Khi khong doc duoc co so du lieu thi khong duoc bao "sai mat
+                // khau": nguoi dung that se tuong tai khoan cua ho bi xoa.
+                http_response_code(503);
+                $error = 'Hệ thống tạm thời không kiểm tra được tài khoản, vui lòng thử lại.';
+            } elseif ($row !== null && password_verify($password, $row['password_hash'])) {
                 // Rotating the identifier after privilege change blocks
                 // session fixation, section 3.2.2 of the course textbook.
                 session_regenerate_id(true);
@@ -34,10 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 record_login_attempt($username, true);
                 header('Location: /member.php');
                 exit;
+            } else {
+                record_login_attempt($username, false);
+                $error = 'Sai tên đăng nhập hoặc mật khẩu.';
             }
-
-            record_login_attempt($username, false);
-            $error = 'Sai tên đăng nhập hoặc mật khẩu.';
         }
     }
 }

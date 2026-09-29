@@ -11,7 +11,7 @@ command -v docker >/dev/null ||
     export PATH="$PATH:/c/Program Files/Docker/Docker/resources/bin"
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$ROOT"
+cd "$ROOT" || exit 1
 
 REPS="${1:-20}"
 N="${2:-600}"
@@ -40,6 +40,13 @@ count_run() {  # $1 = algorithm, $2 = rep (0 la luong lam nong may)
 
     timeout 240 docker compose exec -T client01 ab -n "$N" -c "$C" -q \
         "https://${LB_IP}/healthz" > "$RAW" 2>&1
+    code=$?
+    # Han ngat chi giết tien trình docker tren may chu; ab trong container van
+    # song va tiep tuc gui request vao luong ke tiep, lam hoai hai cot w1..w3.
+    if [ "$code" = "124" ]; then
+        timeout 20 docker compose exec -T client01 pkill ab >/dev/null 2>&1
+        sleep 2
+    fi
 
     docker compose exec -T lb01 sh -c \
         "tail -n +$(( before + 1 )) /var/log/nginx/healthz.log" > "$LOG"
@@ -62,8 +69,11 @@ count_run() {  # $1 = algorithm, $2 = rep (0 la luong lam nong may)
         END { printf "%d,%d,%d,%d,%d", w1 + 0, w2 + 0, w3 + 0, other + 0, retry + 0 }
     ' "$LOG")"
 
-    if [ -z "$rps" ] || [ -z "$counts" ]; then
-        echo "  LOI: $alg luong $rep khong do duoc" >&2
+    if [ -z "$rps" ] || [ -z "$counts" ] || [ "$counts" = "0,0,0,0,0" ]; then
+        # awk END luon in ra nam so, ke ca khi log trong (do moc duoi lon hon
+        # so dong hien tai sau khi log bi xoa). Mot dong toan 0 se bi tinh
+        # vao trung binh nhu that nen phai bao loi, khong ghi.
+        echo "  LOI: $alg luong $rep khong do duoc (rps='${rps}' counts='${counts}')" >&2
         echo "$alg,$rep,,,,,,," >> "$OUT"
         return 1
     fi

@@ -117,3 +117,32 @@ Một lỗi thuộc về phương pháp đo: script đổi thuật toán load ba
 không đặt lại, nên phép đo chạy sau bị dính `ip_hash` và toàn bộ lưu lượng dồn
 về một node mà không có lỗi nào được báo. Sau này mọi script đo tự đặt cấu hình
 của nó.
+
+## 5. Hai lỗi ứng dụng tìm ra khi cho MariaDB chết hẳn
+
+Nếu bị hỏi "hệ thống phản ứng thế nào khi cơ sở dữ liệu chết", đây là câu trả
+lời, kèm hai lỗi đã sửa trong lượt soát cuối:
+
+- `POST /login.php` trả 500 với thân rỗng. Tệp này gọi `db()` mà không bọc
+  `try/catch`, trong khi `index.php` và `dbping.php` thì có. Exception thoát ra
+  ngoài làm php-fpm ghi stack trace, kèm đường dẫn tuyệt đối của node, vào
+  `error.log`. Khách hàng không thấy gì vì `display_errors` tắt, nhưng log thì
+  có.
+- `GET /index.php` trả 504 sau đúng 10 giây, tức chạm `proxy_read_timeout` của
+  load balancer chứ ứng dụng chưa kịp tự trả lời. Nguyên nhân sâu: `new mysqli()`
+  không đặt thời hạn chờ, mà tên `mysql01` khi container đã dừng thì mỗi lần
+  phân giải mất khoảng 5 giây; một request gọi tới hai lần nên vượt ngưỡng.
+
+Sau khi sửa (`MYSQLI_OPT_CONNECT_TIMEOUT` hai giây, nhớ lần thất bại trong cùng
+request, bọc `try/catch` ở `login.php` và `audit.php`) thì: trang chủ trả 200 kèm
+dòng "không kết nối được cơ sở dữ liệu", `dbping.php` trả 200 với `"ok":0`, đăng
+nhập trả 503 kèm thông báo mời thử lại, còn `/healthz` vẫn 200 trong 8 ms vì
+không chạm tới cơ sở dữ liệu. Ba đường đầu vẫn mất khoảng 5 giây, đó là thời gian
+phân giải tên của Docker DNS chứ không phải thời gian kết nối TCP; giới hạn này
+nên nói thẳng nếu bị hỏi tiếp, hướng khắc phục là tĩnh tên `mysql01` trong
+`/etc/hosts` của node hoặc cho `DB_HOST` bằng địa chỉ IP.
+
+Cũng trong lượt soát này, phép kiểm định số vòng của failover được siết lại:
+dòng thiếu dữ liệu trong bảng 12 vòng trước đây bị dụng cụ tổng hợp loại im
+lặng, còn `verify_numbers.py` chỉ yêu cầu "từ 10 vòng". Nay bắt buộc đúng 12 và
+báo lỗi nếu có dòng bị loại.

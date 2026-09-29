@@ -21,7 +21,11 @@ while [ "$(date +%s)" -lt "$END" ]; do
     SEQ=$(( SEQ + 1 ))
     RAW_MS="$(date +%s%3N)"
     CODE="$(curl -sk -m 8 -o /dev/null -D "$HDR" -w '%{http_code} %{time_total}' \
-            "https://${LB_HOST}/healthz" 2>/dev/null)" || CODE="000 0"
+            "https://${LB_HOST}/healthz" 2>/dev/null)"
+    # curl -w van in ra ma 000 va thoi gian da tiep khi het han, do loi ket
+    # noi. Ghi de thanh "000 0" se xoa het thoi gian cham chinh trong luc
+    # node chet, khiem khuyet nen bang tong hop khong con tinh trang.
+    [ -z "$CODE" ] && CODE="000 0"
     STATUS="${CODE%% *}"
     ELAPSED="${CODE##* }"
     NODE="$(tr -d '\r' < "$HDR" | awk -F': ' 'tolower($1) == "x-node" { print $2 }')"

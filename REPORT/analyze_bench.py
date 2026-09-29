@@ -122,7 +122,13 @@ def num(row, key):
 def load_matrix():
     path = newest(os.path.join(BENCH, 'matrix-*.csv'))
     cells = {}
-    for r in rows(path):
+    hdr = rows(path)
+    if hdr and 'p100' not in hdr[0]:
+        # Luong chay truoc khi bench_matrix.sh do phan vi 100%. P100 khi do
+        # in ra dau '-' vi khong do duoc, khong phai vi request nao cham.
+        print('LUU Y: %s khong co cot p100, phep do nay chua ghi nhan phan vi'
+              % os.path.basename(path))
+    for r in hdr:
         if int(r['rep']) == 0:
             continue
         cells.setdefault((r['algorithm'], r['endpoint'], r['keepalive']),
@@ -340,12 +346,18 @@ def load_failover():
 
 def view_failover(show):
     """Failover do lap lai: so mau cham co that su on dinh khi chay lai?"""
-    path, rs = load_failover()
-    rs = [r for r in rs if r['samples']]
-    out = {'n': len(rs), 'source': os.path.basename(path)}
+    path, all_rows = load_failover()
+    rs = [r for r in all_rows if r['samples']]
+    # Mot vong bi loai la bang 3.2 thua mot dong ma khong ai biet. Ghi ro si
+    # so bi loai va dem so luong, de verify_numbers.bat duoc.
+    dropped = len(all_rows) - len(rs)
+    out = {'n': len(rs), 'dropped': dropped, 'source': os.path.basename(path)}
     if show:
         print()
         print('== FAILOVER LAP LAI, %d vong ==   (%s)' % (len(rs), out['source']))
+        if dropped:
+            print('  !! %d DONG THIEU DU LIEU DA BI LOAI (tong %d dong trong file)'
+                  % (dropped, len(all_rows)))
         print('%-12s %4s %10s %8s %8s %10s' % ('chi tieu', 'n', 'TB', '± CI',
                                                'CV', 'min..max'))
     # retry_lines lo ra khoi tong hop: 9 vong dau chay bang failover.sh ban

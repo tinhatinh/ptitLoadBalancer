@@ -16,6 +16,10 @@ RUN apk add --no-cache \
     # container, khien ung dung khong doc duoc DB_HOST va REDIS_HOST.
     && sed -i 's|^;\?clear_env = .*|clear_env = no|' /etc/php83/php-fpm.d/www.conf \
     && sed -i 's|^;\?pm.max_children = .*|pm.max_children = 16|'      /etc/php83/php-fpm.d/www.conf \
+    # display_errors = Off la mac dinh cua image, nhung no phai la mot quyet
+    # dinh ghi ro trong repo: bat len la du de loi PHP in duong dan tuyet doi
+    # va cau truy that ra ngoai khach hang.
+    && sed -i 's|^display_errors = .*|display_errors = Off|' /etc/php83/php.ini \
     && mkdir -p /var/www/public /var/log/nginx /var/log/php83 /run/nginx
 
 COPY nginx.conf       /etc/nginx/node.conf.tpl

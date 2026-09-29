@@ -8,7 +8,7 @@ export MSYS_NO_PATHCONV=1
 export MSYS2_ARG_CONV_EXCL='*'
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$ROOT"
+cd "$ROOT" || exit 1
 
 LB_IP="192.168.240.10"
 STAMP="$(date +%Y%m%d-%H%M%S)"
@@ -16,6 +16,10 @@ OUT="results/security/seccheck-${STAMP}.txt"
 TMP="$(mktemp -d)"
 mkdir -p results/security
 
+# GHI_NHAN la loai thu tu cho mot ket qua trai nguoc voi y thiet ke nhung
+# duoc chap nhan co ly do. Bang hien tai khong con hang muc nao dung loai
+# nay sau khi node da chan container khong phai load balancer, nen WARN
+# luan bang 0; giu lai de hang muc moi biet cho.
 PASS=0; FAIL=0; SKIP=0; WARN=0
 
 cli_sh() { docker compose exec -T client01 sh -c "$1" 2>&1; }
@@ -100,7 +104,7 @@ fi
 # Dem 429 trong log cua chinh location tham do, khong dem "Non-2xx" cua ab:
 # Goi sang http:// (cang 80) thi moi request nhan 301 chuyen huong, ma 301
 # cung la Non-2xx, nen phep do do luon "thanh cong" cho du gioi han tan suat
-# co tat hay khong. Day chinh la lloi da lam o luong chay dau.
+# co tat hay khong. Day chinh la loi da lam o luong chay dau.
 PROBE_BEFORE="$(docker compose exec -T lb01 sh -c \
     'wc -l < /var/log/nginx/probe.log 2>/dev/null || echo 0')"
 PROBE_BEFORE="${PROBE_BEFORE//[!0-9]/}"; PROBE_BEFORE="${PROBE_BEFORE:-0}"

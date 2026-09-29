@@ -10,9 +10,18 @@ if ($user['role'] !== 'admin') {
     exit;
 }
 
-$stmt = db()->prepare('SELECT username, success, client_ip, node_name, occurred_at FROM login_audit ORDER BY id DESC LIMIT 50');
-$stmt->execute();
-$rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$rows = [];
+$db_error = false;
+try {
+    $stmt = db()->prepare('SELECT username, success, client_ip, node_name, occurred_at FROM login_audit ORDER BY id DESC LIMIT 50');
+    $stmt->execute();
+    $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+} catch (Throwable) {
+    // Trang van trang roi, chi khong co noi dung: tra loi sach thay vi de
+    // exception thoat ra ngoai thanh trang 500 trang tron.
+    http_response_code(503);
+    $db_error = true;
+}
 
 $body = '<div class="card"><h2>Nhật ký đăng nhập (50 bản ghi gần nhất)</h2>'
     . '<table><tr><th>Thời điểm</th><th>Tên đăng nhập</th><th>Kết quả</th><th>IP khách hàng</th><th>Ghi từ node</th></tr>';
@@ -29,7 +38,9 @@ foreach ($rows as $r) {
 }
 
 if ($rows === []) {
-    $body .= '<tr><td colspan="5">Chưa có bản ghi nào.</td></tr>';
+    $body .= $db_error
+        ? '<tr><td colspan="5">Không đọc được nhật ký, cơ sở dữ liệu đang tạm ngưng.</td></tr>'
+        : '<tr><td colspan="5">Chưa có bản ghi nào.</td></tr>';
 }
 
 $body .= '</table><p class="meta">Nhật ký nằm trong cơ sở dữ liệu dùng chung nên không mất đi khi một node bị tắt.</p></div>';

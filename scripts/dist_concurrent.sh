@@ -9,7 +9,7 @@ export MSYS_NO_PATHCONV=1
 export MSYS2_ARG_CONV_EXCL='*'
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$ROOT"
+cd "$ROOT" || exit 1
 
 LABEL="${1:-run}"
 N="${2:-600}"
@@ -21,6 +21,10 @@ mkdir -p results/distribute
 
 lines_before="$(docker compose exec -T lb01 sh -c \
     'wc -l < /var/log/nginx/healthz.log 2>/dev/null || echo 0')"
+# Lam sach nhu dist_matrix.sh: neu lenh exec loi thi bien nay khong ra so,
+# va $(( "" + 1 )) = 1 nghia la tail ca file log, tinh luon moi luong truoc.
+lines_before="${lines_before//[!0-9]/}"
+[ -z "$lines_before" ] && lines_before=0
 
 echo "ab -n ${N} -c ${C} https://${LB_IP}/healthz   (nhan: ${LABEL})"
 docker compose exec -T client01 ab -n "$N" -c "$C" "https://${LB_IP}/healthz" \

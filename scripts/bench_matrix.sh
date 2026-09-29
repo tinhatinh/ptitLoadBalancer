@@ -10,9 +10,11 @@ command -v docker >/dev/null ||
     export PATH="$PATH:/c/Program Files/Docker/Docker/resources/bin"
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$ROOT"
+cd "$ROOT" || exit 1
 
-REPS="${1:-15}"
+# Mac dinh 20 luong: bao cao va cac bang doi chieu du dinh so luong nay.
+# Chay it hon thi analyze_bench.py in canh bao "CHI CO n/20 LUONG".
+REPS="${1:-20}"
 N="${2:-5000}"
 C="${3:-20}"
 LB_IP="192.168.240.10"

@@ -190,6 +190,26 @@ def main():
                         % (name, renderings[0],
                            where if where != 'report' else 'toan bao cao'))
 
+    def expect_every(name, rx, value, where='report', tol=0):
+        """Mot dai luong co the xuat o nhieu cho (van prose, caption hinh, o
+        bang). expect() chi can MOT cach dien dat la dat, nen no khong phat
+        hien bao cao ty mau thuan: do la loi da cho qua so 429 khi prose ghi
+        193 con caption ghi 194. O day MOI noi phai thong nhat voi nhau, va
+        (neu co tol) nam trong dung sai so voi luong luu gan nhat."""
+        hay = texts.get(where, report) if where != 'report' else report
+        found = [int(m) for m in re.findall(rx, hay)]
+        if not found:
+            problems.append('%s: khong tim thay dang so nao khop "%s"' % (name, rx))
+            return
+        distinct = sorted(set(found))
+        if len(distinct) > 1:
+            problems.append('%s: bao cao ghi khong nhat quan: %s'
+                            % (name, ', '.join(str(x) for x in distinct)))
+        if max(abs(v - value) for v in found) > tol:
+            problems.append('%s: bao cao ghi %s, luong gan nhat trong results/ '
+                            'la %d (dung sai cho phep %d)'
+                            % (name, distinct, value, tol))
+
     # ---- bang phan phoi tuan tu: doc thang log tho ----
     for alg in ALGS:
         expect('seq-' + alg, ' | '.join(str(x) for x in f['seq-' + alg]))
@@ -319,9 +339,14 @@ def main():
            % (fci('node1'), fci('node2'), fci('node3')))
     if F['errors']['hi_val'] != 0:
         problems.append('co vong failover khong tra ve 0 mau loi')
-    if F['n'] < 10:
-        problems.append('failover moi co %d vong lap trong khi bao cao noi 12'
+    # Bao cao noi 12 vong doc lap. Nguoi 10 thay 12 la mot vong do hong,
+    # nen bat buoc dung 12 va khong duoc co vong nao bi loai im lang.
+    if F['n'] != 12:
+        problems.append('failover co %d vong lap trong khi bao cao noi 12'
                         % F['n'])
+    if F.get('dropped', 0):
+        problems.append('%d dong failover thieu du lieu bi loai khoi bang 3.2'
+                        % F['dropped'])
     expect('fo-log-lines', '%d dòng log ghi' % f['fo-log-lines'],
            'lưu %d dòng log' % f['fo-log-lines'])
     expect('fo-log-acc', '%d dòng access log' % f['fo-log-acc'],
@@ -371,8 +396,13 @@ def main():
     if f['sec-rows'] != n_dat + n_ghi:
         problems.append('so dong kiem tra trong results = %d, bao cao = %d'
                         % (f['sec-rows'], n_dat + n_ghi))
-    expect('sec-429', '%d trên 200 request nhận 429' % f['sec-429'],
-           'chặn %d trong 200 request' % f['sec-429'])
+    # Con so 429 cua phep do nay KHONG tat dinh: mo rong vung gioi han tan suat
+    # len hay xuong vai request tuy toc do may do. Bat (a) bao cao phai ghi
+    # DUNG MOT gia tri o moi noi, va (b) gia tri do phai nam trong dung sai
+    # so voi luong luu gan nhat. So sanh bang bang "=" voi luong moi nhat se
+    # bao sai chi vi chay lai `lab.sh sec` mot lan.
+    expect_every('sec-429', r'(\d+)\s+(?:trên|trong)\s+200', f['sec-429'],
+                 tol=6)
 
     # ---- so cua luong chay cu con sot lai ----
     # Bat ky so nao xuat hien trong bang cung phai la gia tri ma do luong sinh

@@ -8,7 +8,7 @@ export MSYS_NO_PATHCONV=1
 export MSYS2_ARG_CONV_EXCL='*'
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$ROOT"
+cd "$ROOT" || exit 1
 
 LABEL="${1:-baseline}"
 N="${2:-1500}"
@@ -27,14 +27,25 @@ docker compose exec -T client01 ab -n "$N" -c "$C" "https://${LB}/healthz" > "$O
 {
     echo ""
     echo "===== TOM TAT ${LABEL} ====="
-    awk '
-        /Complete requests:/      { printf "  So request hoan thanh      : %s\n", $3 }
-        /Failed requests:/        { printf "  Request that bai           : %s\n", $3 }
-        /Requests per second:/    { printf "  Thong qua (req/s)          : %s\n", $4 }
-        /Time per request.*mean/  { printf "  Thoi gian moi request      : %s ms\n", $4 }
-        /50%/                     { printf "  P50                        : %s ms\n", $2 }
-        /95%/                     { printf "  P95                        : %s ms\n", $2 }
-        /99%/                     { printf "  P99                        : %s ms\n", $2 }
-        /Maximum length of keepalive/ { next }
-    ' "$OUT"
+    if ! grep -q 'Complete requests:' "$OUT"; then
+        # ab fail voi tham so sai (vi du -c lon hon -n) thi van de lai mot
+        # tep chay duoc, khong co dong nao khop. In canh bao thay vi im lang.
+        echo "  LOI: khong doc duoc ket qua ab, xem $OUT"
+        head -3 "$OUT" | sed 's/^/  /'
+    else
+        awk '
+            /Complete requests:/      { printf "  So request hoan thanh      : %s\n", $3 }
+            /Failed requests:/        { printf "  Request that bai           : %s\n", $3 }
+            /Requests per second:/    { printf "  Thong qua (req/s)          : %s\n", $4 }
+            # ab in hai dong "Time per request": mot dong (mean) va mot dong
+            # (mean, across all concurrent requests). Bo qua dau cau cuoi thi
+            # in ra ca hai, ma dong thu hai nho hon bang so ket noi song.
+            /Time per request:.*\(mean\)$/ { printf "  Thoi gian moi request      : %s ms\n", $4 }
+            /served within a certain time/ { pct = 1; next }
+            pct && /^ +50%/           { printf "  P50                        : %s ms\n", $2 }
+            pct && /^ +95%/           { printf "  P95                        : %s ms\n", $2 }
+            pct && /^ +99%/           { printf "  P99                        : %s ms\n", $2 }
+            pct && /^ *100%/          { printf "  P100                       : %s ms\n", $2 }
+        ' "$OUT"
+    fi
 } | tee -a "$OUT"

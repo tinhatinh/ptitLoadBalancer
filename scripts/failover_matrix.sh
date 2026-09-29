@@ -13,7 +13,7 @@ command -v docker >/dev/null ||
     export PATH="$PATH:/c/Program Files/Docker/Docker/resources/bin"
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$ROOT"
+cd "$ROOT" || exit 1
 
 REPS="${1:-12}"
 DUR="${2:-70}"
@@ -27,6 +27,7 @@ echo "rep,samples,errors,slow,avg_ms,max_ms,w1,w2,w3,retry_lines" > "$OUT"
 
 for ((i = 1; i <= REPS; i++)); do
     echo "--- luong $i/$REPS ---"
+    T0="$(date +%s)"
     bash scripts/failover.sh web02 "$DUR" "$RESTART_AFTER" \
         > "$KEEP/run-$i.out" 2>&1
 
@@ -35,7 +36,18 @@ for ((i = 1; i <= REPS; i++)); do
     CSV="$(ls -t results/failover/load-*.csv 2>/dev/null | head -1)"
     if [ -z "$SUM" ]; then
         echo "  LOI: luong $i khong co bang tong hop" >&2
-        echo "$i,,,,,,,">> "$OUT"
+        # Dong phai du 10 cot nhu tieu de, neu khong DictReader day cac gia
+        # tri tiep theo sang cot thua va luong do bi loai im lang.
+        echo "$i,,,,,,,,," >> "$OUT"
+        continue
+    fi
+    # `ls -t` lay file MOI NHAT, khong phai file cua luong nay. Neu
+    # failover.sh ket thuc som ma khong sinh ra bang tong hop thi ba dong
+    # duoi day lay lai tro cua luong truoc do va bang 12 vong co mot dong
+    # trung. Do lan da xay ra voi luong 10.
+    if [ "$(stat -c %Y "$SUM" 2>/dev/null || echo 0)" -lt "$T0" ]; then
+        echo "  LOI: luong $i lay lai tong hop cua luong tru ($SUM)" >&2
+        echo "$i,,,,,,,,," >> "$OUT"
         continue
     fi
     cp "$SUM" "$KEEP/summary-$i.txt"

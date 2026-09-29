@@ -188,7 +188,7 @@ Redis nằm trong mạng backend và không có cổng công bố. Ai đọc đ�
 
 #3 2.7.1 Kết thúc TLS và header phản hồi
 
-TLS kết thúc tại `lb01` với `ssl_protocols TLSv1.2 TLSv1.3` và chứng chỉ tự ký khai báo `subjectAltName` gồm cả địa chỉ 192.168.240.10. Toàn bộ cổng 80 chỉ làm một việc: chuyển hướng 301 sang HTTPS.
+TLS kết thúc tại `lb01` với `ssl_protocols TLSv1.2 TLSv1.3` và chứng chỉ tự ký khai báo `subjectAltName` gồm cả địa chỉ 192.168.240.10. Cổng 80 chỉ còn một việc là chuyển hướng 301 sang HTTPS, ngoại trừ đường `/healthz` được giữ lại trên cả hai cổng để hệ thống giám sát gọi được mà không qua bước chuyển hướng (mục 2.7.4).
 
 ```
 add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;

@@ -657,6 +657,7 @@
  },
  "failover": {
   "n": 12,
+  "dropped": 0,
   "source": "repeat-20260929-144558.csv",
   "samples": {
    "n": 12,

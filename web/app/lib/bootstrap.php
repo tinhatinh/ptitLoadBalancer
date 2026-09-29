@@ -20,17 +20,37 @@ function node_name(): string
 function db(): mysqli
 {
     static $conn = null;
-    if ($conn === null) {
-        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-        $conn = new mysqli(
+    static $failed = false;
+
+    if ($conn instanceof mysqli) {
+        return $conn;
+    }
+    // Khi MariaDB khong tra loi, viec mo ket noi keo dai hang chuc giay trong
+    // khi load balancer chi cho php-fpm 10 giay (proxy_read_timeout). Khong
+    // dat gioi han thi khach hang nhan 504 va request chiem chin slot cua
+    // php-fpm. That bai trong 2 giay la du de trang van con phuc vu duoc.
+    // Co $failed ngan lan goi tiep theo trong cung request khong phai cho.
+    if ($failed) {
+        throw new RuntimeException('Khong ket noi duoc co so du lieu.');
+    }
+
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+    $candidate = mysqli_init();
+    $candidate->options(MYSQLI_OPT_CONNECT_TIMEOUT, 2);
+    try {
+        $candidate->real_connect(
             env('DB_HOST', 'mysql01'),
             env('DB_USER', 'webapp'),
             env('DB_PASSWORD'),
             env('DB_NAME', 'de07_web'),
             (int) env('DB_PORT', '3306')
         );
-        $conn->set_charset('utf8mb4');
+        $candidate->set_charset('utf8mb4');
+    } catch (Throwable $e) {
+        $failed = true;
+        throw $e;
     }
+    $conn = $candidate;
     return $conn;
 }
 
@@ -101,6 +121,18 @@ function csrf_ok(?string $token): bool
 function client_ip(): string
 {
     return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+}
+
+/** Doc dong users theo ten dang nhap. Tra ve null khi khong co tai khoan,
+ *  nem exception khi khong doc duoc co so du lieu. */
+function lookup_user(string $username): ?array
+{
+    $stmt = db()->prepare(
+        'SELECT id, username, password_hash, full_name, role FROM users WHERE username = ?'
+    );
+    $stmt->bind_param('s', $username);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_assoc() ?: null;
 }
 
 function record_login_attempt(string $username, bool $success): void

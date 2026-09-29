@@ -88,9 +88,15 @@ docker compose exec -T web02 sh -c \
 ```
 
 Nếu trang trả về `1.2.3.4` thì mọi dòng truy vết đều có thể bị đầu độc bởi bất
-kỳ ai đã nằm trong mạng nội bộ. Hướng sửa: chỉ tin `X-Real-IP` khi
-`$remote_addr` là đúng địa chỉ load balancer (dùng `map` + `geo`), hoặc chấp
-nhận rằng nhật ký chỉ đáng tin tới tầng cân bằng tải.
+kỳ ai đã nằm trong mạng nội bộ. **Đã chạy cả hai chiều**: lệnh trên in ra
+`1.2.3.4`, còn cũng tiêu đề đó gửi từ client01 xuyên qua load balancer thì trang
+vẫn báo đúng `192.168.240.20`, vì load balancer ghi đè `X-Real-IP` bằng
+`$remote_addr` của chính kết nối TCP. Đừng mất thời gian thử giả mạo từ phía
+khách hàng, cửa đó đã đóng; cửa còn lại nằm sau bước chiếm một container.
+
+Hướng sửa: chỉ tin `X-Real-IP` khi `$remote_addr` là đúng địa chỉ load balancer
+(dùng `map` + `geo`), hoặc chấp nhận rằng nhật ký chỉ đáng tin tới tầng cân bằng
+tải.
 
 ### 3.2 Đọc toàn bộ phiên từ Redis sau khi chiếm một container backend
 
@@ -143,6 +149,17 @@ Cần một kịch bản thật: dựng một trang ở nguồn khác, POST có 
 `Secure` và `SameSite=Lax` chặn phần lớn đường gửi, bài kiểm chứng giá trị nhất
 thường là **chứng minh nó chặn được**, kèm giải thích vì sao.
 
+Một điểm đã đo và cần khai thác tiếp: token **không dùng một lần**.
+`csrf_token()` sinh một giá trị rồi giữ nguyên trong suốt phiên, `csrf_ok()` chỉ
+so mà không xoay vòng token, và `session_regenerate_id(true)` khi đăng nhập thành
+công giữ nguyên toàn bộ `$_SESSION`. Thực nghiệm: lấy một token rồi gửi ba lần
+đăng nhập sai liên tiếp, cả ba lần đều nhận "Sai tên đăng nhập" chứ không nhận
+"Mã bảo vệ không hợp lệ". Token pre-login vì thế vẫn dùng được sau login. Đây là
+khoảng cách thật so với khuyến nghị thông thường, dù bản thân nó chưa phải lỗ hổng
+CSRF (kẻ tấn công vẫn không đọc được token của nạn nhân). Nếu bịt, sửa
+`csrf_ok()` để xoay vòng token ngay sau khi so khớp, rồi kiểm tra lại luồng
+`session_client.sh login` (một lần GET rồi một lần POST) vẫn chạy.
+
 ### 3.6 Session fixation và cố định quyền
 
 `session_regenerate_id(true)` được gọi sau khi đăng nhập. Kịch bản cần dựng:
@@ -186,6 +203,33 @@ Node chạy nginx (master root) và php-fpm trong cùng một container. Đáng 
 tra: `docker compose exec -T web01 id`, `capsh --print` nếu có, và việc
 `./scripts` được mount vào client01 dưới dạng chỉ đọc còn các dịch vụ khác thì
 không mount gì.
+
+### 3.11 Làm cho ứng dụng không phục vụ được nữa
+
+MariaDB và Redis là hai điểm hỏng đơn lẻ còn lại, và mỗi đường dẫn xử lý một
+trong hai thứ đó khác nhau. Trạng thái hiện tại đã đo lúc `docker compose stop
+mysql01`:
+
+| Đường | Kết quả khi DB chết | Thời gian |
+|---|---|---|
+| `/index.php` | 200, kèm dòng "không kết nối được cơ sở dữ liệu" | ~5 s |
+| `/dbping.php` | 200, `{"rows":0,"ok":0}` | ~5 s |
+| `POST /login.php` | 503 kèm thông báo mời thử lại | ~5 s |
+| `/healthz` | 200, không chạm DB | 8 ms |
+
+Ba đường đầu từng là **lỗi thật**: `login.php` gọi `db()` mà không bọc
+`try/catch` nên PHP bắn exception trần (500, thân rỗng, kèm đường dẫn tuyệt đối
+trong stack trace ở log của node), còn `index.php` treo tới hạn 10 s của load
+balancer nên trả 504. Nguyên nhân sâu là `new mysqli()` không có thời hạn chờ
+khi phân giải tên `mysql01` thất bại. `db()` bây giờ đặt
+`MYSQLI_OPT_CONNECT_TIMEOUT` 2 giây và nhớ lần thất bại trong cùng request.
+
+Còn đất diễn: ~5 s chờ đó là `getaddrinfo` của Docker DNS, không phải connect
+timeout, nên một kẻ làm được việc chặn DNS hoặc làm php-fpm hết worker vẫn hạ
+được dịch vụ. Mỗi node chạy `pm.max_children = 16` (đặt bằng `sed` trong
+`web/Dockerfile`), tức toàn cụm có 48 worker; kết hợp với 5 s treo ở mỗi request
+chạm DB thì con số request đồng thời cần để bão hoà là bao nhiêu, đó là một bài
+đo có bằng chứng rõ ràng.
 
 ## 4. Những gì ĐÃ được kiểm chứng, đừng làm lại
 

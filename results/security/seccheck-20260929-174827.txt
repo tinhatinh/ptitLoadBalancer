@@ -1,5 +1,5 @@
 ==================================================================
- KIEM TRA AN TOAN WEB SERVER CLUSTER    20260929-152524
+ KIEM TRA AN TOAN WEB SERVER CLUSTER    20260929-174827
  Load balancer 192.168.240.10 | may do client01 192.168.240.20
 ==================================================================
   [PASS] An phien ban trong header Server               server_tokens off tai load balancer
@@ -14,7 +14,7 @@
   [PASS] Cookie phien mang co SameSite                  SameSite=Lax
   [PASS] Khong goi truc tiep duoc thu vien rieng        location ^~ /lib/
   [PASS] Healthz khong lo thong tin he thong            body: {"status":"ok","node":"web03"}
-  [PASS] Rate limit chan request gui qua nhanh          193/200 nhan 429 (burst=5)
+  [PASS] Rate limit chan request gui qua nhanh          194/200 nhan 429 (burst=5)
   [PASS] Thu muc config cua ung dung bi node chan       location = /config.php
   [PASS] Node web khong goi duoc tu mang phia ngoai     mang backend internal
   [PASS] Node tu choi container khong phai load balancer allow 172.20.0.10 o node, truoc day tra 200

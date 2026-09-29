@@ -16,7 +16,7 @@ command -v docker >/dev/null ||
     export PATH="$PATH:/c/Program Files/Docker/Docker/resources/bin"
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$ROOT"
+cd "$ROOT" || exit 1
 
 REPS="${1:-20}"
 N="${2:-3000}"

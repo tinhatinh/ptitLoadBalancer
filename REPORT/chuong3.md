@@ -349,7 +349,7 @@ tbl:
 
 Mười chín hạng mục đều cho kết quả đúng như cấu hình đã khai báo; không có hạng mục thất bại và không còn hạng mục nào phải ghi nhận. Ba kết quả cụ thể như sau.
 
-Hạng mục giới hạn tần suất từng báo đạt một cách sai lệch. Bản đầu của kiểm tra này gọi tới cổng 80 rồi đếm dòng "Non-2xx" mà ApacheBench in ra. Cổng 80 chỉ làm một việc là chuyển cưỡng bức sang HTTPS, nên toàn bộ 200 request đều nhận mã 301, và 301 cũng là non-2xx. Kiểm tra vì thế luôn đạt cho dù giới hạn có tắt. Bản hiện tại gọi thẳng sang HTTPS và đếm mã 429 trong tệp log riêng của đường thăm dò, do chính nginx ghi lại. Kết quả là 193 trên 200 request nhận 429; bảy request còn lại lọt qua, sát với `burst=5` cộng một request đang được xét, phần lệch nằm ở tốc độ bù của vùng trong lúc máy đo gửi hết 200 request.
+Hạng mục giới hạn tần suất từng báo đạt một cách sai lệch. Bản đầu của kiểm tra này gọi tới cổng 80 rồi đếm dòng "Non-2xx" mà ApacheBench in ra. Đường mà ApacheBench gọi ở cổng 80 chỉ nhận chuyển hướng cưỡng bức sang HTTPS, nên toàn bộ 200 request đều nhận mã 301, và 301 cũng là non-2xx. Kiểm tra vì thế luôn đạt cho dù giới hạn có tắt. Bản hiện tại gọi thẳng sang HTTPS và đếm mã 429 trong tệp log riêng của đường thăm dò, do chính nginx ghi lại. Kết quả là 194 trên 200 request nhận 429; sáu request còn lại lọt qua, đúng bằng `burst=5` cộng một request đang được xét, phần lệch nằm ở tốc độ bù của vùng trong lúc máy đo gửi hết 200 request.
 
 Hạng mục đọc file cấu hình cũng từng là một kiểm tra chết. Vị trí khai báo `location ~ ^/(config\.php|\.env)` nằm sau `location ~ \.php$`, mà nginx xét các regex theo thứ tự xuất hiện, nên mọi request tới `/config.php` đã bị khối xử lý `.php` nhận trước và rule chặn không bao giờ chạy. Sửa thành `location = /config.php` thì đúng, vì match tuyệt đối có ưu tiên cao hơn mọi regex.
 
@@ -357,7 +357,7 @@ Hạng mục "Node từ chối container khác trong cùng mạng backend" trư�
 
 [[FIG:anh-hinh-12|Bảng kiểm cấu hình mười chín hạng mục in ra từ sec_check.sh|16]]
 
-[[FIG:anh-hinh-18|Giới hạn tần suất chặn 194 trong 200 request gửi dồn dập vào đường thăm dò|16]]
+[[FIG:anh-hinh-18|Một lượt gửi dồn dập vào đường thăm dò: ApacheBench báo 200 request hoàn thành và bộ đếm của nginx ghi nhận số request bị từ chối|16]]
 
 #2 3.7 Nhận xét và hạn chế
 
