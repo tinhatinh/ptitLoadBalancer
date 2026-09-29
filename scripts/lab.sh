@@ -60,7 +60,7 @@ wait_db() {
 # container. Khong doc tu bien moi truong cua Git Bash: .env chi do compose doc,
 # nen bien ay luan rong va ghan nham ten thuat toan cho mot phep do.
 current_algorithm() {
-    conf="$(docker compose exec -T lb01 sed -n '1,8p' /etc/nginx/conf.d/default.conf 2>/dev/null | tr -d '')"
+    conf="$(docker compose exec -T lb01 sed -n '1,8p' /etc/nginx/conf.d/default.conf 2>/dev/null | tr -d '\r')"
     if printf '%s' "$conf" | grep -q 'ip_hash'; then echo ip_hash
     elif printf '%s' "$conf" | grep -q 'least_conn'; then echo least_conn
     else echo round_robin; fi
