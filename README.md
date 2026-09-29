@@ -28,7 +28,7 @@ chạy lần đầu trên máy của bạn.
 
 ## Đo đạc
 
-Ba phép đo của đề bài và hai phép đo bổ sung:
+Ba nội dung đề bài yêu cầu và các phép đo bổ sung:
 
 ```bash
 ./scripts/lab.sh dist-all       # 3.2.1: ba thuat toan, 300 request tuan tu
@@ -55,7 +55,6 @@ thư mục chỉ giữ lượt chạy mới nhất; các lượt đã bị thay 
 `results/_archived/` và `results/_run1_stale/`, không được bất kỳ công cụ tổng
 hợp nào đọc tới. `results/failover/NOTA.md` giải thích một vòng đo đã bị loại và
 một cột số liệu đã hỏng trong thư mục đó.
-
 
 ## Báo cáo
 
@@ -96,7 +95,7 @@ Bảng kiểm an toàn 19 hạng mục (`./scripts/lab.sh sec`) mới chứng mi
 đang chạy đúng**, chưa phải thử nghiệm xâm nhập. Phần tấn công để ngỏ và được
 hướng dẫn ở mục "Làm tiếp: phần tấn công".
 
-## Dia chi trong lab
+## Địa chỉ trong lab
 
 | Thành phần | Container | Địa chỉ | Mạng |
 |---|---|---|---|
@@ -111,11 +110,11 @@ hướng dẫn ở mục "Làm tiếp: phần tấn công".
 Mạng `backend` khai báo `internal: true`, nên node web không có đường ra
 Internet và không nghe cổng nào trên máy chủ. Chỉ `lb01` có cổng công bố.
 
-## Vi sao co container client01
+## Vì sao có container client01
 
-Goi tu Windows thi Docker Desktop NAT ghi de mat IP nguon, khong the do duoc
-ip_hash va cung khong chung minh duoc chuoi IP khach hang trong log. client01
-nam cung mang frontend voi load balancer nen IP nguon la that.
+Gọi từ máy Windows thì Docker Desktop NAT ghi đè mất địa chỉ nguồn, nên không
+đo được `ip_hash` và cũng không chứng minh được chuỗi IP khách hàng trong nhật
+ký. client01 nằm cùng mạng frontend với load balancer nên địa chỉ nguồn là thật.
 
 ## Làm tiếp: phần tấn công
 
@@ -125,7 +124,7 @@ Người nhận repo muốn đi sâu phía thử nghiệm xâm nhập đọc
 cách thêm một kiểm tra vào bộ `sec_check.sh` hiện có mà không phá số liệu đã
 trông cậy được.
 
-## Ghi chu ve Keepalived
+## Ghi chú về Keepalived
 
 Đề bài chỉ yêu cầu cân bằng tải cho máy chủ web nên phần này không bật. Thư mục
 `keepalived/` giữ sẵn cấu hình VRRP để nói về điểm hỏng đơn lẻ còn lại: chính
