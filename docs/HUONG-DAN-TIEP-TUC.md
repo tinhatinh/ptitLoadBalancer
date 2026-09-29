@@ -83,9 +83,9 @@ Ba điểm làm thay đổi cách tấn công so với một web app thông thư
    của load balancer; IP khách hàng đi qua tiêu đề `X-Real-IP` do load balancer
    ghi, và được chuyển cho PHP qua `fastcgi_param REMOTE_ADDR`. Xem mục 3.1.
 
-## 3. Những thứ nên thử, xếp theo giá trị
+## 3. Những điều recommend bạn có thể thử
 
-### 3.1 Giả mạo IP trong nhật ký truy vết (nhiều khả năng thành công)
+### 3.1 Giả mạo IP trong nhật ký truy vết 
 
 `index.php` in ra `client_ip()` và `login_audit.client_ip` lưu lại chính giá trị
 đó, trong khi node lấy nó từ `X-Real-IP` của load balancer. Từ vị trí của một
