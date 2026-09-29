@@ -81,7 +81,7 @@ Ba điểm làm thay đổi cách tấn công so với một web app thông thư
    chiếm được một container.
 3. **Node không còn dùng `set_real_ip_from`**. `$remote_addr` ở node là địa chỉ
    của load balancer; IP khách hàng đi qua tiêu đề `X-Real-IP` do load balancer
-   ghi, và được chuyển cho PHP qua `fastcgi_param REMOTE_ADDR`. Xem mục 3.4.
+   ghi, và được chuyển cho PHP qua `fastcgi_param REMOTE_ADDR`. Xem mục 3.1.
 
 ## 3. Những thứ nên thử, xếp theo giá trị
 
