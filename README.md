@@ -90,11 +90,34 @@ mục 9 của `docs/HUONG-DAN-TIEP-TUC.md`.
 
 ## Trạng thái hiện tại
 
-Ba nội dung đề bài yêu cầu đã triển khai và có số liệu: phân phối request qua
-ba thuật toán, chịu lỗi khi tắt một node giữa vòng đo, tính liên tục của phiên
-qua sự cố đó. Ma trận hiệu năng 18 ô, phép đo cụm suy giảm và phép đo failover
-lặp lại 12 vòng đều đã chạy xong; `python REPORT/verify_numbers.py` đối chiếu
-từng con số trong báo cáo với `results/`.
+Đề bài yêu cầu ba việc, và mỗi việc tương ứng một phép đo đã chạy xong:
+
+| Yêu cầu của đề bài | Phép đo | Kết quả đo được |
+|---|---|---|
+| Kiểm tra phân phối request | 600 request gửi đồng thời qua 20 kết nối song song, lặp lại 20 lượt độc lập cho mỗi thuật toán | round robin chia 199,9 / 200,1 / 200,0 giữa ba node, độ lệch lớn nhất giữa hai node trong một lượt là 1,0 request; least_conn chia 199,9 / 200,5 / 199,6 với độ lệch 10,2; ip_hash dồn cả 600 về một node ở cả hai mươi lượt |
+| Khả năng đáp ứng khi một server gặp sự cố | vòng đo 70 giây gửi request liên tục, lặp lại 12 lần độc lập, tắt hẳn `web02` ở giây thứ 10 | không có request nào nhận mã lỗi ở cả 12 vòng; trung bình 8,8 ± 0,4 request mỗi vòng phải chờ thêm khoảng hai giây vì nginx thử lại node đã chết |
+| Tính liên tục của phiên làm việc qua sự cố | đăng nhập, tắt đúng node vừa phục vụ đăng nhập, gọi lại `/member.php` mười lần | kho phiên Redis dùng chung giữ được 10/10 phiên; lưu phiên trên đĩa của chính node giữ được 0/10 |
+
+Ký hiệu `±` ở trên là nửa khoảng tin cậy 95% của giá trị trung bình, tính từ số
+lượt đo lặp lại, không phải độ chính xác của thiết bị.
+
+Ba nội dung đo thêm ngoài phạm vi đề bài, để trả lời câu hỏi "hệ thống chậm là
+chậm ở đâu":
+
+- Ma trận 18 ô, tức ba thuật toán nhân ba tầng phản hồi nhân hai chế độ giữ kết
+  nối, mỗi ô 20 lượt. Nó tách thông qua của bộ cân bằng tải ra khỏi thông qua
+  của ứng dụng: 31.360 req/s khi nginx tự trả lời, giảm còn 805 req/s khi mỗi
+  yêu cầu phải chuyển tiếp sang node.
+- So sánh cụm ba node với cụm hai node: mất một node chỉ làm thông qua trung
+  bình giảm 7,7%, nhưng làm hệ số biến thiên tăng từ 4,2% lên 14,7% và đẩy
+  request chậm nhất trong lượt đo từ 54 ms lên 1048 ms.
+- Bảng kiểm 19 hạng mục cấu hình an toàn.
+
+Mọi con số in trong báo cáo đều đọc lại được từ tệp thô:
+`python REPORT/verify_numbers.py` lần lượt mở từng bảng trong `REPORT/*.md`,
+truy ngược mỗi ô về đúng tệp trong `results/`, và báo lỗi nêu rõ ô nào nếu một
+giá trị không tái lập được. Đây là chốt chặn để không ai trích lại một con số
+đã bị lượt đo sau thay thế.
 
 Bảng kiểm an toàn 19 hạng mục (`./scripts/lab.sh sec`) mới chứng minh **cấu hình
 đang chạy đúng**, chưa phải thử nghiệm xâm nhập. Phần tấn công để ngỏ và được
