@@ -1,0 +1,22 @@
+# Chung tu cua lab: sinh ra tu .env.example, khong bao gio day len repo.
+.env
+nginx/lb/certs/
+
+# San pham trung gian cua cong cu bao cao
+__pycache__/
+*.pyc
+REPORT/_shot_tmp/
+REPORT/pages/
+REPORT/numbering.json
+REPORT/out.docx
+REPORT/out.pdf
+
+# Cac luong chay da bi thay the. Bao cao doi chieu voi luong MOI NHAT nen
+# giu lai chung chi gay nhiu cho nguoi doc lai so lieu.
+results/_archived/
+results/_run1_stale/
+results/**/*.log.bak
+
+# Cookie jar cua session_client.sh: nay sinh lai sau moi lan dang nhap va
+# chua dinh danh phiên that, khong phai bang chung de luu.
+results/session/jar

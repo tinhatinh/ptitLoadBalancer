@@ -1,0 +1,33 @@
+# Mac dinh la text va tra loi LF. May Windows thuong dat core.autocrlf=true,
+# khi clone ve se doi LF thanh CRLF. Shell script chay trong container Alpine
+# ma nhiem CRLF thi that bai tu voi loi "bad interpreter", cau hinh nginx co
+# ky tu \r o cuoi dong thi loi dich.
+* text=auto eol=lf
+
+# File nhi phan: khong duoc doi noi dung duoi bat ky ly do nao.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
+*.docx binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+
+# Tai lieu va cau hinh doc o nhieu nen tang: giue LF.
+*.md   text eol=lf
+*.sh   text eol=lf
+*.php  text eol=lf
+*.conf text eol=lf
+*.yml  text eol=lf
+*.sql  text eol=lf
+*.html text eol=lf
+*.puml text eol=lf
+*.py   text eol=lf
+*.csv  text eol=lf
+.env.example text eol=lf
+
+# File Windows can giu CRLF de mo dung trong Notepad.
+*.bat text eol=crlf
+*.cmd text eol=crlf

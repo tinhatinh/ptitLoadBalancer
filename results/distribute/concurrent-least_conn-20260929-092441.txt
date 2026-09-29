@@ -1,0 +1,17 @@
+nhan=least_conn  n=600  concurrency=20  stamp=20260929-092441
+Complete requests:      600
+Failed requests:        0
+Requests per second:    781.23 [#/sec] (mean)
+Time per request:       25.601 [ms] (mean)
+Time per request:       1.280 [ms] (mean, across all concurrent requests)
+50%     24
+95%     38
+99%     42
+
+Phan phối node theo access log của load balancer:
+  web01    201
+  web02    194
+  web03    205
+
+So request phai thu lai o node khac (upstream co hai dia chi):
+0

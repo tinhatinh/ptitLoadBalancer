@@ -1,0 +1,39 @@
+@startuml
+' Hinh: - Nguyen ly round robin: duyet theo thu tu vong, khong xet tai
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam sequenceArrowThickness 1.5
+skinparam participantBorderColor #33475B
+
+title Round robin: sáu yêu cầu đi qua ba node theo thứ tự vòng
+
+actor "Người dùng" as U
+participant "Bộ cân bằng\ntải" as LB
+participant "Node 1" as N1
+participant "Node 2" as N2
+participant "Node 3" as N3
+
+U -> LB : req 1
+LB -> N1 : chuyển
+N1 --> U : đáp ứng
+U -> LB : req 2
+LB -> N2 : chuyển
+N2 --> U : đáp ứng
+U -> LB : req 3
+LB -> N3 : chuyển
+N3 --> U : đáp ứng
+U -> LB : req 4
+LB -> N1 : quay lại đầu danh sách
+U -> LB : req 5
+LB -> N2
+U -> LB : req 6
+LB -> N3
+
+note over LB
+  Con trỏ dịch một bước
+  sau mỗi yêu cầu, bất kể
+  node đang bận hay nhàn
+end note
+@enduml

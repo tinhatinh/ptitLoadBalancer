@@ -1,0 +1,41 @@
+@startuml
+' Hinh: kien truc trien khai thuc te cua lab
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam shadowing false
+skinparam rectangleBorderColor #33475B
+skinparam ArrowColor #33475B
+
+rectangle "client01\n192.168.240.20\n(curl, ab)" as CLI #EFE6F7
+
+rectangle "**Mạng frontend 192.168.240.0/24**" as FE {
+  rectangle "**lb01**\nnginx 1.27-alpine\n192.168.240.10\ncong công bố 8080, 8443" as LB #DCE9F7
+}
+
+rectangle "**Mạng backend 172.20.0.0/24**\ninternal: true, không có đường ra ngoài" as BE {
+  rectangle "web01\n172.20.0.11\nnginx + php-fpm" as W1 #DFF0DF
+  rectangle "web02\n172.20.0.12\nnginx + php-fpm" as W2 #DFF0DF
+  rectangle "web03\n172.20.0.13\nnginx + php-fpm" as W3 #DFF0DF
+  rectangle "redis01\n172.20.0.20\nkho phiên" as RD #E8F3E8
+  rectangle "mysql01\n172.20.0.30\nMariaDB 11.4" as MY #E8F3E8
+}
+
+CLI -right-> LB : HTTPS 443
+LB -down-> W1
+LB -down-> W2
+LB -down-> W3
+W1 -right-> RD : session
+W2 -right-> RD : session
+W3 -right-> RD : session
+W1 -down-> MY
+W2 -down-> MY
+W3 -down-> MY
+
+note right of LB
+  lb01 là container duy nhất
+  có cổng công bố ra máy chủ.
+  Node web không expose port
+  và không đi được ra Internet.
+end note
+@enduml

@@ -1,0 +1,99 @@
+  upstream: upstream web_cluster {
+  upstream:     least_conn;
+  upstream: 
+  upstream:     server web01:80 max_fails=2 fail_timeout=10s;
+  upstream:     server web02:80 max_fails=2 fail_timeout=10s;
+  upstream:     server web03:80 max_fails=2 fail_timeout=10s;
+
+############## 3-node ##############
+  lam nong may: 3-node/cold
+  3-node   cold       rep  1  rps=  797.94  P99=  43  P100=   52
+  3-node   cold       rep  2  rps=  798.08  P99=  39  P100=   47
+  3-node   cold       rep  3  rps=  741.60  P99=  50  P100=   78
+  3-node   cold       rep  4  rps=  781.87  P99=  44  P100=   57
+  3-node   cold       rep  5  rps=  810.45  P99=  39  P100=   45
+  3-node   cold       rep  6  rps=  800.39  P99=  43  P100=   64
+  3-node   cold       rep  7  rps=  792.01  P99=  46  P100=   54
+  3-node   cold       rep  8  rps=  818.70  P99=  41  P100=   50
+  3-node   cold       rep  9  rps=  779.08  P99=  41  P100=   57
+  3-node   cold       rep 10  rps=  824.71  P99=  41  P100=   51
+  3-node   cold       rep 11  rps=  749.57  P99=  49  P100=   55
+  3-node   cold       rep 12  rps=  789.47  P99=  45  P100=   54
+  3-node   cold       rep 13  rps=  775.42  P99=  42  P100=   52
+  3-node   cold       rep 14  rps=  767.26  P99=  45  P100=   57
+  3-node   cold       rep 15  rps=  722.36  P99=  49  P100=   61
+  3-node   cold       rep 16  rps=  808.52  P99=  41  P100=   51
+  3-node   cold       rep 17  rps=  787.76  P99=  44  P100=   57
+  3-node   cold       rep 18  rps=  803.84  P99=  41  P100=   47
+  3-node   cold       rep 19  rps=  716.04  P99=  50  P100=   67
+  3-node   cold       rep 20  rps=  720.98  P99=  49  P100=   57
+  lam nong may: 3-node/keepalive
+  3-node   keepalive  rep  1  rps=  801.90  P99=  43  P100=   53
+  3-node   keepalive  rep  2  rps=  810.39  P99=  38  P100=   51
+  3-node   keepalive  rep  3  rps=  777.18  P99=  43  P100=   51
+  3-node   keepalive  rep  4  rps=  736.74  P99=  52  P100=   73
+  3-node   keepalive  rep  5  rps=  768.92  P99=  44  P100=   53
+  3-node   keepalive  rep  6  rps=  765.98  P99=  45  P100=   53
+  3-node   keepalive  rep  7  rps=  780.23  P99=  41  P100=   47
+  3-node   keepalive  rep  8  rps=  756.08  P99=  44  P100=   52
+  3-node   keepalive  rep  9  rps=  813.07  P99=  39  P100=   44
+  3-node   keepalive  rep 10  rps=  719.74  P99=  50  P100=   75
+  3-node   keepalive  rep 11  rps=  806.09  P99=  42  P100=   47
+  3-node   keepalive  rep 12  rps=  771.27  P99=  46  P100=   50
+  3-node   keepalive  rep 13  rps=  751.73  P99=  44  P100=   55
+  3-node   keepalive  rep 14  rps=  713.68  P99=  45  P100=   54
+  3-node   keepalive  rep 15  rps=  699.91  P99=  57  P100=   69
+  3-node   keepalive  rep 16  rps=  745.62  P99=  45  P100=   52
+  3-node   keepalive  rep 17  rps=  820.03  P99=  39  P100=   43
+  3-node   keepalive  rep 18  rps=  803.54  P99=  39  P100=   45
+  3-node   keepalive  rep 19  rps=  777.08  P99=  46  P100=   52
+  3-node   keepalive  rep 20  rps=  809.52  P99=  38  P100=   46
+  node phuc vu trong kich thuoc 3-node: 3-node,42156,41962,41882,0,126000
+
+############## 2-node ##############
+  da tat web03; cho het chu ky fail_timeout de node bi loai khoi danh sach
+  lam nong may: 2-node/cold
+  2-node   cold       rep  1  rps=  777.28  P99=  46  P100=   52
+  2-node   cold       rep  2  rps=  736.18  P99=  37  P100= 2032
+  2-node   cold       rep  3  rps=  698.09  P99=  52  P100=   75
+  2-node   cold       rep  4  rps=  703.73  P99=  62  P100= 2033
+  2-node   cold       rep  5  rps=  744.08  P99=  46  P100=   57
+  2-node   cold       rep  6  rps=  669.24  P99=  39  P100= 2027
+  2-node   cold       rep  7  rps=  821.66  P99=  42  P100=   51
+  2-node   cold       rep  8  rps=  591.15  P99=  38  P100= 2022
+  2-node   cold       rep  9  rps=  832.09  P99=  40  P100=   47
+  2-node   cold       rep 10  rps=  565.87  P99=  40  P100= 2033
+  2-node   cold       rep 11  rps=  793.18  P99=  44  P100=   55
+  2-node   cold       rep 12  rps=  607.33  P99=  42  P100= 2039
+  2-node   cold       rep 13  rps=  656.77  P99=  64  P100=   78
+  2-node   cold       rep 14  rps=  828.79  P99=  42  P100= 2021
+  2-node   cold       rep 15  rps=  927.98  P99=  33  P100=   41
+  2-node   cold       rep 16  rps=  548.97  P99=  54  P100= 2021
+  2-node   cold       rep 17  rps=  831.80  P99=  41  P100=   51
+  2-node   cold       rep 18  rps=  594.49  P99=  41  P100= 2019
+  2-node   cold       rep 19  rps=  792.21  P99=  57  P100=   69
+  2-node   cold       rep 20  rps=  667.58  P99=  38  P100= 2024
+  lam nong may: 2-node/keepalive
+  2-node   keepalive  rep  1  rps=  982.75  P99=  34  P100=   44
+  2-node   keepalive  rep  2  rps=  921.65  P99=  39  P100= 2032
+  2-node   keepalive  rep  3  rps=  900.79  P99=  36  P100=   45
+  2-node   keepalive  rep  4  rps=  692.32  P99=  30  P100= 2016
+  2-node   keepalive  rep  5  rps=  919.54  P99=  44  P100=   84
+  2-node   keepalive  rep  6  rps=  615.60  P99=  32  P100= 2022
+  2-node   keepalive  rep  7  rps=  549.90  P99=  37  P100= 2008
+  2-node   keepalive  rep  8  rps=  859.85  P99=  34  P100= 2015
+  2-node   keepalive  rep  9  rps=  977.98  P99=  30  P100= 2016
+  2-node   keepalive  rep 10  rps= 1003.90  P99=  31  P100=   39
+  2-node   keepalive  rep 11  rps=  980.23  P99=  29  P100= 2026
+  2-node   keepalive  rep 12  rps=  953.19  P99=  32  P100= 2024
+  2-node   keepalive  rep 13  rps=  584.75  P99=  33  P100= 2015
+  2-node   keepalive  rep 14  rps=  985.18  P99=  32  P100= 2022
+  2-node   keepalive  rep 15  rps=  594.47  P99=  35  P100= 2018
+  2-node   keepalive  rep 16  rps=  834.17  P99=  37  P100= 2018
+  2-node   keepalive  rep 17  rps=  970.81  P99=  32  P100=   37
+  2-node   keepalive  rep 18  rps=  978.57  P99=  28  P100= 2016
+  2-node   keepalive  rep 19  rps= 1000.52  P99=  31  P100= 2009
+  2-node   keepalive  rep 20  rps=  659.34  P99=  36  P100= 2020
+  node phuc vu trong kich thuoc 2-node: 2-node,63058,62942,0,126,126000
+
+Da ghi results/bench/degrade-20260929-115844.csv (84 luong) va results/bench/degrade-nodes-20260929-115844.csv

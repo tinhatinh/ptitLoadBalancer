@@ -1,0 +1,44 @@
+@startuml
+' Hinh: - He thong co bo can bang tai dung truoc cum may chu web
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam rectangleBorderColor #33475B
+skinparam rectangleBackgroundColor #FFFFFF
+skinparam ArrowColor #33475B
+skinparam shadowing false
+
+rectangle "Người dùng" as U {
+  agent "Trình duyệt" as B
+}
+
+rectangle "Mạng công cộng" as PUB {
+  cloud "Internet" as INet
+}
+
+rectangle "Trung tâm dữ liệu" as DC {
+  rectangle "**Bộ cân bằng tải**\nđịa chỉ phục vụ duy nhất" as LB #DCE9F7
+  rectangle "Cụm máy chủ web" as CLUSTER {
+    rectangle "Node 1" as W1
+    rectangle "Node 2" as W2
+    rectangle "Node 3\n(đang hỏng)" as W3 #F6D7D7
+  }
+  database "Cơ sở dữ liệu\ndùng chung" as DB #E8F3E8
+}
+
+B -right-> INet : yêu cầu
+INet -right-> LB : một địa chỉ
+LB -down-> W1 : chọn
+LB -down-> W2 : chọn
+LB -down[#BBB]-x W3 : loại
+W1 -down-> DB
+W2 -down-> DB
+W3 -[hidden]down- DB
+
+note bottom of LB
+  Yêu cầu tới node hỏng
+  được chuyển sang node
+  còn lại mà người dùng
+  không phải làm lại
+end note
+@enduml

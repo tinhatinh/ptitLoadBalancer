@@ -1,0 +1,25 @@
+[t=0s]   Mo vong do 70s, mot request cach nhau 0,2 s cong thoi gian dap ung, ghi vao results/failover/load-web02-20260929-145911.csv
+[t=5s]   Trang thai cluster truoc khi tat web02:
+           de07-client01: Up 13 hours
+           de07-lb01: Up 2 hours
+           de07-mysql01: Up 4 hours (healthy)
+           de07-redis01: Up 4 hours (healthy)
+           de07-web01: Up 19 minutes
+           de07-web02: Up 46 seconds
+           de07-web03: Up 19 minutes
+[t=10s]  docker compose stop web02
+ Container de07-web02 Stopping 
+ Container de07-web02 Stopped 
+[t=40s] docker compose start web02
+ Container de07-web02 Starting 
+ Container de07-web02 Started 
+scripts/failover.sh: line 49: {{.Name}}: {{.Status}}: command not found
+[t=10s]  docker compose stop web02
+ Container de07-web02 Stopping 
+ Container de07-web02 Stopped 
+[t=40s] docker compose start web02
+ Container de07-web02 Starting 
+ Container de07-web02 Started 
+
+== LOG cua load balancer trong khoang thoi gian dien ra su co ==
+scripts/failover.sh: line 71: LOG_BEFORE: unbound variable

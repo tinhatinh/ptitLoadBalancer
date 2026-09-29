@@ -1,0 +1,37 @@
+[t=0s]   Mo vong do 70s, mot request cach nhau 0,2 s cong thoi gian dap ung, ghi vao results/failover/load-web02-20260929-150848.csv
+[t=5s]   Trang thai cluster truoc khi tat web02:
+           de07-client01: Up 13 hours
+           de07-lb01: Up 2 hours
+           de07-mysql01: Up 4 hours (healthy)
+           de07-redis01: Up 4 hours (healthy)
+           de07-web01: Up 29 minutes
+           de07-web02: Up 5 minutes
+           de07-web03: Up 29 minutes
+[t=10s]  docker compose stop web02
+ Container de07-web02 Stopping 
+ Container de07-web02 Stopped 
+[t=40s] docker compose start web02
+ Container de07-web02 Starting 
+ Container de07-web02 Started 
+
+== LOG cua load balancer trong khoang thoi gian dien ra su co ==
+Da luu 22 dong log vao results/failover/retries-web02-20260929-150848.log (9 dong access log co hai dia chi upstream, 13 dong error/warn cua nginx)
+192.168.240.20 - [29/Sep/2026:08:09:12 +0000] "GET /healthz HTTP/2.0" status=200 upstream=172.20.0.12:80, 172.20.0.11:80 upstream_status=504, 200 upstream_time=2.002, 0.001 req_time=2.001 xff="-"
+192.168.240.20 - [29/Sep/2026:08:09:17 +0000] "GET /healthz HTTP/2.0" status=200 upstream=172.20.0.12:80, 172.20.0.13:80 upstream_status=504, 200 upstream_time=2.002, 0.001 req_time=2.003 xff="-"
+192.168.240.20 - [29/Sep/2026:08:09:20 +0000] "GET /healthz HTTP/2.0" status=200 upstream=172.20.0.12:80, 172.20.0.11:80 upstream_status=504, 200 upstream_time=2.002, 0.002 req_time=2.004 xff="-"
+192.168.240.20 - [29/Sep/2026:08:09:25 +0000] "GET /healthz HTTP/2.0" status=200 upstream=172.20.0.12:80, 172.20.0.13:80 upstream_status=504, 200 upstream_time=2.002, 0.002 req_time=2.004 xff="-"
+192.168.240.20 - [29/Sep/2026:08:09:28 +0000] "GET /healthz HTTP/2.0" status=200 upstream=172.20.0.12:80, 172.20.0.11:80 upstream_status=504, 200 upstream_time=2.003, 0.001 req_time=2.004 xff="-"
+192.168.240.20 - [29/Sep/2026:08:09:32 +0000] "GET /healthz HTTP/2.0" status=200 upstream=172.20.0.12:80, 172.20.0.13:80 upstream_status=502, 200 upstream_time=1.545, 0.001 req_time=1.547 xff="-"
+== KET QUA DO FAILOVER ==
+Tong so mau                  : 225
+So mau co HTTP != 200        : 0
+Thoi gian dap ung trung binh : 0.0873 s
+Thoi gian dap ung lon nhat   : 2.0127 s
+
+Nguoi dung khong nhan ma loi nao trong suot ky do.
+Mau phai chiu thoi gian cho vuot 1 s (nginx thu lai node da chet) : 9
+
+-- Phan phoi node trong ky do --
+  web01      89
+  web02      53
+  web03      83

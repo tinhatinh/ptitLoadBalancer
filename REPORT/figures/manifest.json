@@ -1,0 +1,42 @@
+{
+ "he-thong": {
+  "bytes": 34894,
+  "png": "7bb2979c3c3c165fe88427c878ce388454a756738e8ccf8cdba434936be9b766",
+  "puml": "d6408d7c1703c0181e30714a8a0d0ed977b3b15725063c2b89b1298d3f2c1995"
+ },
+ "ip-hash": {
+  "bytes": 32825,
+  "png": "1aeaa73517feb38e0b3b2a24c3f9287992d57e9dd2e98f674d62519a0ca9eefe",
+  "puml": "55c3fad270e6f019f8fed4a95fcea138a3df0c0ad00be3963c7126aa5d75a306"
+ },
+ "kien-truc": {
+  "bytes": 39816,
+  "png": "f11c96577633e6a59f696f47d8b21b4285b50cb2dd64f5275c3b24871388145a",
+  "puml": "bc76746ffab7f3e8acbbb9cb7232d4c323dd9dd05950c5ef84c355c21239adc3"
+ },
+ "least-conn": {
+  "bytes": 30042,
+  "png": "465e3cd067d05758394917d190a4e35e46b58b53b736aadcf7ed3d6b0e8d03df",
+  "puml": "1bf4336f6093405cee713d5329912789824c0785303dd0e3653a7c3768a9a83b"
+ },
+ "luong-request": {
+  "bytes": 20935,
+  "png": "57f84afe34c7ff2f0e277f132a38a67e1da59d0c9583b6d1e87761696e6e75e1",
+  "puml": "e1302f678ed83440f2298d87a6efb4f6d0c7ca9cf531017a1e50ed442d22760f"
+ },
+ "phien-chung": {
+  "bytes": 41333,
+  "png": "003e1b0f27a82fec59e8d4fa5f245a17d23eb61a64407445946bcc50c7ed3700",
+  "puml": "d89b778b828e2687a2b1017fa2c4d008e16ab5ae1e7ca0090072de35d308acba"
+ },
+ "round-robin": {
+  "bytes": 19033,
+  "png": "6bdd786fe397acfbdd965c8efc6e312f59ace356864c23e9ae69aa67de25126b",
+  "puml": "322430bd557c67992a627039450b4edff2fc1f7fc0c19873c04c7af29e00803a"
+ },
+ "thanh-phan": {
+  "bytes": 18695,
+  "png": "b3c82af56f21ec341b87bb24bc89b675e2775789561da737da1e500b0d8e7892",
+  "puml": "9255c328ccfb57cd65e4cfa0d6ed5c8d8782d64c571017f979f3ca2cdd1e7c1e"
+ }
+}

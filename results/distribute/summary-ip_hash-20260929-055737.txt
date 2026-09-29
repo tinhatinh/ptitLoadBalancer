@@ -1,0 +1,5 @@
+algorithm=ip_hash
+requests=300
+missing_node_header=0
+distribution:
+300 web01

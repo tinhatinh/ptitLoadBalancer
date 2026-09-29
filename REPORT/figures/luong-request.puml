@@ -1,0 +1,35 @@
+@startuml
+' Hinh: duong di cua mot yeu cau HTTP qua cum may chu
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam shadowing false
+skinparam sequenceArrowThickness 1.4
+skinparam participantBorderColor #33475B
+
+title Đường đi của một yêu cầu /member.php
+
+actor "client01\n192.168.240.20" as C
+participant "lb01\nTLS + chọn node" as LB
+participant "web02\nnginx + php-fpm" as W
+database "redis01\nkho phiên" as R
+database "mysql01" as D
+
+C -> LB : HTTPS 443, cookie DE07SID
+activate LB
+note right of LB
+  1. Giai rewrite: chon location
+  2. Giai preaccess: limit_req, limit_conn
+  3. Thuat toan chon node
+end note
+LB -> W : HTTP 80, them X-Forwarded-For
+activate W
+W -> R : GET de07:<sid>
+R --> W : du lieu phien
+W -> D : SELECT ho so nguoi dung
+D --> W : ket qua
+W --> LB : 200, kem header X-Node
+deactivate W
+LB --> C : 200, them HSTS va CSP
+deactivate LB
+@enduml

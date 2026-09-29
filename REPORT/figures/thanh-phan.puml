@@ -1,0 +1,38 @@
+@startuml
+' Hinh: - Cac thanh phan cua mot cum may chu web can bang tai
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam rectangleBorderColor #33475B
+skinparam ArrowColor #33475B
+skinparam shadowing false
+
+rectangle "Bộ định tuyến vào\n(DNS hoặc VIP)" as DNS #EFE6F7
+rectangle "Bộ cân bằng tải" as LB #DCE9F7 {
+  rectangle "Danh sách thành viên\n(pool / upstream)" as POOL
+  rectangle "Thuật toán chọn\nnode" as ALGO
+  rectangle "Cơ chế kiểm tra\nsức khỏe" as HC
+}
+rectangle "Node web 1" as W1
+rectangle "Node web 2" as W2
+rectangle "Node web 3" as W3
+rectangle "Kho phiên\ndùng chung" as SES #E8F3E8
+rectangle "Cơ sở dữ liệu\ndùng chung" as DB #E8F3E8
+rectangle "Nơi chứa tệp\ntải lên" as UP #E8F3E8
+
+DNS -down-> LB
+POOL -right-> ALGO
+HC -right-> POOL : cập nhật\ntrạng thái
+LB -down-> W1
+LB -down-> W2
+LB -down-> W3
+W1 -right-> SES
+W2 -right-> SES
+W3 -right-> SES
+W1 -down-> DB
+W2 -down-> DB
+W3 -down-> DB
+W1 ..> UP
+W2 ..> UP
+W3 ..> UP
+@enduml

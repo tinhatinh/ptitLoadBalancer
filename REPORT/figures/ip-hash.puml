@@ -1,0 +1,35 @@
+@startuml
+' Hinh: - Nguyen ly ip hash: cung mot IP luon ra cung mot node
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam rectangleBorderColor #33475B
+skinparam ArrowColor #33475B
+
+rectangle "Người dùng A\n113.161.87.10" as A #EFE6F7
+rectangle "Người dùng B\n113.161.87.10\n(cùng mạng công ty)" as B #EFE6F7
+rectangle "Người dùng C\n58.187.20.44" as C #EFE6F7
+
+rectangle "Hàm băm trên địa chỉ IP nguồn\nhash(IP) mod 3" as H #DCE9F7
+
+rectangle "Node 1" as N1 #DFF0DF
+rectangle "Node 2" as N2 #FFF3D6
+rectangle "Node 3" as N3 #FFF3D6
+
+A -right-> H
+B -right-> H
+C -right-> H
+H -down-> N1 : A và B cùng ra giá trị 0
+H -down-> N2 : không có ai
+H -down-> N3 : C ra giá trị 2
+
+note bottom of H
+  Ưu điểm: phiên để trong node
+  vẫn dùng lại được.
+  Nhược điểm: nhiều người dùng
+  chung một IP dồn hết tải vào
+  một node; thêm hoặc bớt node
+  làm ánh xạ thay đổi hàng loạt.
+end note
+@enduml

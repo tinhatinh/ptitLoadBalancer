@@ -1,0 +1,7 @@
+algorithm=least_conn
+requests=300
+missing_node_header=0
+distribution:
+104 web01
+98 web02
+98 web03

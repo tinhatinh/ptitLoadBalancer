@@ -1,0 +1,386 @@
+
+############## round_robin ##############
+  nong may: lb-only/cold
+  round_robin  lb-only      cold       rep  1  rps=  975.89  P99=  31
+  round_robin  lb-only      cold       rep  2  rps=  995.45  P99=  32
+  round_robin  lb-only      cold       rep  3  rps=  989.65  P99=  34
+  round_robin  lb-only      cold       rep  4  rps=  907.16  P99=  36
+  round_robin  lb-only      cold       rep  5  rps=  893.04  P99=  37
+  round_robin  lb-only      cold       rep  6  rps=  919.94  P99=  36
+  round_robin  lb-only      cold       rep  7  rps=  911.32  P99=  36
+  round_robin  lb-only      cold       rep  8  rps=  980.44  P99=  32
+  round_robin  lb-only      cold       rep  9  rps=  937.86  P99=  33
+  round_robin  lb-only      cold       rep 10  rps=  896.23  P99=  37
+  round_robin  lb-only      cold       rep 11  rps=  959.08  P99=  32
+  round_robin  lb-only      cold       rep 12  rps=  912.80  P99=  37
+  round_robin  lb-only      cold       rep 13  rps=  830.43  P99=  41
+  round_robin  lb-only      cold       rep 14  rps=  870.81  P99=  35
+  round_robin  lb-only      cold       rep 15  rps=  876.51  P99=  43
+  round_robin  lb-only      cold       rep 16  rps=  830.62  P99=  39
+  round_robin  lb-only      cold       rep 17  rps=  874.57  P99=  40
+  round_robin  lb-only      cold       rep 18  rps=  879.36  P99=  36
+  round_robin  lb-only      cold       rep 19  rps=  894.46  P99=  38
+  round_robin  lb-only      cold       rep 20  rps=  951.21  P99=  33
+  nong may: lb-only/keepalive
+  round_robin  lb-only      keepalive  rep  1  rps=26603.29  P99=   3
+  round_robin  lb-only      keepalive  rep  2  rps=31681.33  P99=   2
+  round_robin  lb-only      keepalive  rep  3  rps=33893.33  P99=   2
+  round_robin  lb-only      keepalive  rep  4  rps=28585.59  P99=   3
+  round_robin  lb-only      keepalive  rep  5  rps=33572.82  P99=   2
+  round_robin  lb-only      keepalive  rep  6  rps=30736.45  P99=   3
+  round_robin  lb-only      keepalive  rep  7  rps=31987.38  P99=   2
+  round_robin  lb-only      keepalive  rep  8  rps=25941.23  P99=   4
+  round_robin  lb-only      keepalive  rep  9  rps=35615.92  P99=   2
+  round_robin  lb-only      keepalive  rep 10  rps=28864.19  P99=   3
+  round_robin  lb-only      keepalive  rep 11  rps=32629.98  P99=   2
+  round_robin  lb-only      keepalive  rep 12  rps=26712.97  P99=   2
+  round_robin  lb-only      keepalive  rep 13  rps=37503.28  P99=   2
+  round_robin  lb-only      keepalive  rep 14  rps=38899.91  P99=   2
+  round_robin  lb-only      keepalive  rep 15  rps=31574.29  P99=   3
+  round_robin  lb-only      keepalive  rep 16  rps=26447.33  P99=   2
+  round_robin  lb-only      keepalive  rep 17  rps=23205.27  P99=   3
+  round_robin  lb-only      keepalive  rep 18  rps=21599.98  P99=   3
+  round_robin  lb-only      keepalive  rep 19  rps=19985.34  P99=   5
+  round_robin  lb-only      keepalive  rep 20  rps=11343.40  P99=   9
+  nong may: healthz/cold
+  round_robin  healthz      cold       rep  1  rps=  702.11  P99=  59
+  round_robin  healthz      cold       rep  2  rps=  814.85  P99=  39
+  round_robin  healthz      cold       rep  3  rps=  657.76  P99=  59
+  round_robin  healthz      cold       rep  4  rps=  731.58  P99=  48
+  round_robin  healthz      cold       rep  5  rps=  838.95  P99=  39
+  round_robin  healthz      cold       rep  6  rps=  765.71  P99=  47
+  round_robin  healthz      cold       rep  7  rps=  794.41  P99=  39
+  round_robin  healthz      cold       rep  8  rps=  806.87  P99=  39
+  round_robin  healthz      cold       rep  9  rps=  799.78  P99=  39
+  round_robin  healthz      cold       rep 10  rps=  772.25  P99=  45
+  round_robin  healthz      cold       rep 11  rps=  742.50  P99=  49
+  round_robin  healthz      cold       rep 12  rps=  770.11  P99=  42
+  round_robin  healthz      cold       rep 13  rps=  660.01  P99=  63
+  round_robin  healthz      cold       rep 14  rps=  706.02  P99=  48
+  round_robin  healthz      cold       rep 15  rps=  699.04  P99=  49
+  round_robin  healthz      cold       rep 16  rps=  734.96  P99=  45
+  round_robin  healthz      cold       rep 17  rps=  787.89  P99=  44
+  round_robin  healthz      cold       rep 18  rps=  795.17  P99=  41
+  round_robin  healthz      cold       rep 19  rps=  799.40  P99=  40
+  round_robin  healthz      cold       rep 20  rps=  799.91  P99=  42
+  nong may: healthz/keepalive
+  round_robin  healthz      keepalive  rep  1  rps=  803.99  P99=  39
+  round_robin  healthz      keepalive  rep  2  rps=  771.33  P99=  45
+  round_robin  healthz      keepalive  rep  3  rps=  833.61  P99=  38
+  round_robin  healthz      keepalive  rep  4  rps=  862.89  P99=  41
+  round_robin  healthz      keepalive  rep  5  rps=  875.32  P99=  39
+  round_robin  healthz      keepalive  rep  6  rps=  869.30  P99=  36
+  round_robin  healthz      keepalive  rep  7  rps=  875.32  P99=  38
+  round_robin  healthz      keepalive  rep  8  rps=  823.87  P99=  39
+  round_robin  healthz      keepalive  rep  9  rps=  854.70  P99=  37
+  round_robin  healthz      keepalive  rep 10  rps=  874.40  P99=  38
+  round_robin  healthz      keepalive  rep 11  rps=  855.59  P99=  39
+  round_robin  healthz      keepalive  rep 12  rps=  865.81  P99=  40
+  round_robin  healthz      keepalive  rep 13  rps=  832.99  P99=  37
+  round_robin  healthz      keepalive  rep 14  rps=  871.58  P99=  36
+  round_robin  healthz      keepalive  rep 15  rps=  843.85  P99=  39
+  round_robin  healthz      keepalive  rep 16  rps=  852.65  P99=  44
+  round_robin  healthz      keepalive  rep 17  rps=  862.85  P99=  38
+  round_robin  healthz      keepalive  rep 18  rps=  844.79  P99=  37
+  round_robin  healthz      keepalive  rep 19  rps=  866.14  P99=  37
+  round_robin  healthz      keepalive  rep 20  rps=  819.93  P99=  39
+  nong may: dbping.php/cold
+  round_robin  dbping.php   cold       rep  1  rps=  727.66  P99=  42
+  round_robin  dbping.php   cold       rep  2  rps=  686.87  P99=  51
+  round_robin  dbping.php   cold       rep  3  rps=  686.92  P99=  50
+  round_robin  dbping.php   cold       rep  4  rps=  697.48  P99=  43
+  round_robin  dbping.php   cold       rep  5  rps=  681.37  P99=  45
+  round_robin  dbping.php   cold       rep  6  rps=  699.37  P99=  44
+  round_robin  dbping.php   cold       rep  7  rps=  684.21  P99=  48
+  round_robin  dbping.php   cold       rep  8  rps=  701.84  P99=  46
+  round_robin  dbping.php   cold       rep  9  rps=  696.95  P99=  46
+  round_robin  dbping.php   cold       rep 10  rps=  686.06  P99=  46
+  round_robin  dbping.php   cold       rep 11  rps=  705.23  P99=  43
+  round_robin  dbping.php   cold       rep 12  rps=  685.52  P99=  49
+  round_robin  dbping.php   cold       rep 13  rps=  687.27  P99=  46
+  round_robin  dbping.php   cold       rep 14  rps=  713.57  P99=  44
+  round_robin  dbping.php   cold       rep 15  rps=  683.74  P99=  47
+  round_robin  dbping.php   cold       rep 16  rps=  670.03  P99=  48
+  round_robin  dbping.php   cold       rep 17  rps=  707.13  P99=  44
+  round_robin  dbping.php   cold       rep 18  rps=  699.61  P99=  45
+  round_robin  dbping.php   cold       rep 19  rps=  679.53  P99=  53
+  round_robin  dbping.php   cold       rep 20  rps=  688.50  P99=  50
+  nong may: dbping.php/keepalive
+  round_robin  dbping.php   keepalive  rep  1  rps=  681.38  P99=  46
+  round_robin  dbping.php   keepalive  rep  2  rps=  696.91  P99=  46
+  round_robin  dbping.php   keepalive  rep  3  rps=  673.84  P99=  47
+  round_robin  dbping.php   keepalive  rep  4  rps=  684.92  P99=  46
+  round_robin  dbping.php   keepalive  rep  5  rps=  678.01  P99=  53
+  round_robin  dbping.php   keepalive  rep  6  rps=  703.31  P99=  47
+  round_robin  dbping.php   keepalive  rep  7  rps=  683.32  P99=  45
+  round_robin  dbping.php   keepalive  rep  8  rps=  678.57  P99=  49
+  round_robin  dbping.php   keepalive  rep  9  rps=  685.77  P99=  46
+  round_robin  dbping.php   keepalive  rep 10  rps=  690.25  P99=  46
+  round_robin  dbping.php   keepalive  rep 11  rps=  695.37  P99=  45
+  round_robin  dbping.php   keepalive  rep 12  rps=  621.83  P99=  55
+  round_robin  dbping.php   keepalive  rep 13  rps=  704.44  P99=  47
+  round_robin  dbping.php   keepalive  rep 14  rps=  677.57  P99=  47
+  round_robin  dbping.php   keepalive  rep 15  rps=  676.91  P99=  47
+  round_robin  dbping.php   keepalive  rep 16  rps=  688.48  P99=  47
+  round_robin  dbping.php   keepalive  rep 17  rps=  689.86  P99=  46
+  round_robin  dbping.php   keepalive  rep 18  rps=  705.80  P99=  45
+  round_robin  dbping.php   keepalive  rep 19  rps=  666.30  P99=  46
+  round_robin  dbping.php   keepalive  rep 20  rps=  686.61  P99=  45
+
+############## least_conn ##############
+  nong may: lb-only/cold
+  least_conn   lb-only      cold       rep  1  rps=  953.33  P99=  35
+  least_conn   lb-only      cold       rep  2  rps=  906.05  P99=  34
+  least_conn   lb-only      cold       rep  3  rps=  899.85  P99=  35
+  least_conn   lb-only      cold       rep  4  rps=  899.09  P99=  38
+  least_conn   lb-only      cold       rep  5  rps=  933.22  P99=  34
+  least_conn   lb-only      cold       rep  6  rps=  912.75  P99=  38
+  least_conn   lb-only      cold       rep  7  rps=  970.33  P99=  32
+  least_conn   lb-only      cold       rep  8  rps=  829.24  P99=  40
+  least_conn   lb-only      cold       rep  9  rps=  926.84  P99=  36
+  least_conn   lb-only      cold       rep 10  rps=  895.66  P99=  37
+  least_conn   lb-only      cold       rep 11  rps=  928.19  P99=  35
+  least_conn   lb-only      cold       rep 12  rps=  909.39  P99=  35
+  least_conn   lb-only      cold       rep 13  rps=  944.97  P99=  36
+  least_conn   lb-only      cold       rep 14  rps=  950.64  P99=  35
+  least_conn   lb-only      cold       rep 15  rps=  947.18  P99=  36
+  least_conn   lb-only      cold       rep 16  rps=  879.42  P99=  45
+  least_conn   lb-only      cold       rep 17  rps=  903.20  P99=  34
+  least_conn   lb-only      cold       rep 18  rps=  923.43  P99=  34
+  least_conn   lb-only      cold       rep 19  rps=  918.47  P99=  38
+  least_conn   lb-only      cold       rep 20  rps=  947.45  P99=  34
+  nong may: lb-only/keepalive
+  least_conn   lb-only      keepalive  rep  1  rps=27882.60  P99=   3
+  least_conn   lb-only      keepalive  rep  2  rps=33162.00  P99=   2
+  least_conn   lb-only      keepalive  rep  3  rps=35915.24  P99=   2
+  least_conn   lb-only      keepalive  rep  4  rps=25690.21  P99=   3
+  least_conn   lb-only      keepalive  rep  5  rps=27008.53  P99=   2
+  least_conn   lb-only      keepalive  rep  6  rps=28358.87  P99=   2
+  least_conn   lb-only      keepalive  rep  7  rps=36417.49  P99=   2
+  least_conn   lb-only      keepalive  rep  8  rps=35607.89  P99=   2
+  least_conn   lb-only      keepalive  rep  9  rps=27327.63  P99=   2
+  least_conn   lb-only      keepalive  rep 10  rps=33091.40  P99=   2
+  least_conn   lb-only      keepalive  rep 11  rps=34206.36  P99=   2
+  least_conn   lb-only      keepalive  rep 12  rps=32857.99  P99=   2
+  least_conn   lb-only      keepalive  rep 13  rps=28363.43  P99=   2
+  least_conn   lb-only      keepalive  rep 14  rps=30177.14  P99=   3
+  least_conn   lb-only      keepalive  rep 15  rps=33084.10  P99=   2
+  least_conn   lb-only      keepalive  rep 16  rps=35141.97  P99=   4
+  least_conn   lb-only      keepalive  rep 17  rps=23908.57  P99=   5
+  least_conn   lb-only      keepalive  rep 18  rps=37350.13  P99=   2
+  least_conn   lb-only      keepalive  rep 19  rps=34789.87  P99=   3
+  least_conn   lb-only      keepalive  rep 20  rps=26859.34  P99=   3
+  nong may: healthz/cold
+  least_conn   healthz      cold       rep  1  rps=  788.89  P99=  43
+  least_conn   healthz      cold       rep  2  rps=  826.96  P99=  38
+  least_conn   healthz      cold       rep  3  rps=  869.74  P99=  37
+  least_conn   healthz      cold       rep  4  rps=  763.77  P99=  48
+  least_conn   healthz      cold       rep  5  rps=  801.05  P99=  42
+  least_conn   healthz      cold       rep  6  rps=  695.13  P99=  51
+  least_conn   healthz      cold       rep  7  rps=  805.17  P99=  41
+  least_conn   healthz      cold       rep  8  rps=  811.79  P99=  40
+  least_conn   healthz      cold       rep  9  rps=  755.99  P99=  47
+  least_conn   healthz      cold       rep 10  rps=  806.01  P99=  42
+  least_conn   healthz      cold       rep 11  rps=  826.30  P99=  37
+  least_conn   healthz      cold       rep 12  rps=  804.65  P99=  38
+  least_conn   healthz      cold       rep 13  rps=  671.39  P99=  56
+  least_conn   healthz      cold       rep 14  rps=  695.64  P99=  52
+  least_conn   healthz      cold       rep 15  rps=  801.05  P99=  43
+  least_conn   healthz      cold       rep 16  rps=  830.42  P99=  38
+  least_conn   healthz      cold       rep 17  rps=  827.85  P99=  40
+  least_conn   healthz      cold       rep 18  rps=  834.65  P99=  38
+  least_conn   healthz      cold       rep 19  rps=  788.22  P99=  42
+  least_conn   healthz      cold       rep 20  rps=  823.87  P99=  41
+  nong may: healthz/keepalive
+  least_conn   healthz      keepalive  rep  1  rps=  805.70  P99=  44
+  least_conn   healthz      keepalive  rep  2  rps=  818.21  P99=  39
+  least_conn   healthz      keepalive  rep  3  rps=  798.01  P99=  44
+  least_conn   healthz      keepalive  rep  4  rps=  772.52  P99=  41
+  least_conn   healthz      keepalive  rep  5  rps=  805.89  P99=  40
+  least_conn   healthz      keepalive  rep  6  rps=  812.07  P99=  39
+  least_conn   healthz      keepalive  rep  7  rps=  816.36  P99=  40
+  least_conn   healthz      keepalive  rep  8  rps=  828.70  P99=  41
+  least_conn   healthz      keepalive  rep  9  rps=  764.43  P99=  44
+  least_conn   healthz      keepalive  rep 10  rps=  821.32  P99=  38
+  least_conn   healthz      keepalive  rep 11  rps=  817.10  P99=  40
+  least_conn   healthz      keepalive  rep 12  rps=  811.84  P99=  42
+  least_conn   healthz      keepalive  rep 13  rps=  810.42  P99=  40
+  least_conn   healthz      keepalive  rep 14  rps=  775.02  P99=  42
+  least_conn   healthz      keepalive  rep 15  rps=  813.71  P99=  39
+  least_conn   healthz      keepalive  rep 16  rps=  818.93  P99=  40
+  least_conn   healthz      keepalive  rep 17  rps=  805.89  P99=  42
+  least_conn   healthz      keepalive  rep 18  rps=  817.41  P99=  38
+  least_conn   healthz      keepalive  rep 19  rps=  781.42  P99=  43
+  least_conn   healthz      keepalive  rep 20  rps=  804.07  P99=  39
+  nong may: dbping.php/cold
+  least_conn   dbping.php   cold       rep  1  rps=  685.06  P99=  45
+  least_conn   dbping.php   cold       rep  2  rps=  686.72  P99=  47
+  least_conn   dbping.php   cold       rep  3  rps=  647.84  P99=  50
+  least_conn   dbping.php   cold       rep  4  rps=  632.56  P99=  51
+  least_conn   dbping.php   cold       rep  5  rps=  666.18  P99=  47
+  least_conn   dbping.php   cold       rep  6  rps=  691.97  P99=  46
+  least_conn   dbping.php   cold       rep  7  rps=  722.85  P99=  45
+  least_conn   dbping.php   cold       rep  8  rps=  719.69  P99=  44
+  least_conn   dbping.php   cold       rep  9  rps=  722.38  P99=  43
+  least_conn   dbping.php   cold       rep 10  rps=  720.35  P99=  44
+  least_conn   dbping.php   cold       rep 11  rps=  713.13  P99=  43
+  least_conn   dbping.php   cold       rep 12  rps=  728.39  P99=  42
+  least_conn   dbping.php   cold       rep 13  rps=  723.60  P99=  42
+  least_conn   dbping.php   cold       rep 14  rps=  693.44  P99=  49
+  least_conn   dbping.php   cold       rep 15  rps=  728.94  P99=  43
+  least_conn   dbping.php   cold       rep 16  rps=  731.38  P99=  43
+  least_conn   dbping.php   cold       rep 17  rps=  693.40  P99=  47
+  least_conn   dbping.php   cold       rep 18  rps=  722.31  P99=  44
+  least_conn   dbping.php   cold       rep 19  rps=  706.96  P99=  46
+  least_conn   dbping.php   cold       rep 20  rps=  720.28  P99=  43
+  nong may: dbping.php/keepalive
+  least_conn   dbping.php   keepalive  rep  1  rps=  715.26  P99=  43
+  least_conn   dbping.php   keepalive  rep  2  rps=  713.24  P99=  44
+  least_conn   dbping.php   keepalive  rep  3  rps=  696.98  P99=  46
+  least_conn   dbping.php   keepalive  rep  4  rps=  721.14  P99=  42
+  least_conn   dbping.php   keepalive  rep  5  rps=  714.31  P99=  46
+  least_conn   dbping.php   keepalive  rep  6  rps=  687.43  P99=  47
+  least_conn   dbping.php   keepalive  rep  7  rps=  691.62  P99=  48
+  least_conn   dbping.php   keepalive  rep  8  rps=  713.13  P99=  44
+  least_conn   dbping.php   keepalive  rep  9  rps=  704.26  P99=  48
+  least_conn   dbping.php   keepalive  rep 10  rps=  711.06  P99=  47
+  least_conn   dbping.php   keepalive  rep 11  rps=  686.77  P99=  46
+  least_conn   dbping.php   keepalive  rep 12  rps=  704.54  P99=  44
+  least_conn   dbping.php   keepalive  rep 13  rps=  699.43  P99=  45
+  least_conn   dbping.php   keepalive  rep 14  rps=  720.75  P99=  44
+  least_conn   dbping.php   keepalive  rep 15  rps=  697.86  P99=  45
+  least_conn   dbping.php   keepalive  rep 16  rps=  730.28  P99=  43
+  least_conn   dbping.php   keepalive  rep 17  rps=  721.13  P99=  45
+  least_conn   dbping.php   keepalive  rep 18  rps=  715.02  P99=  44
+  least_conn   dbping.php   keepalive  rep 19  rps=  721.26  P99=  45
+  least_conn   dbping.php   keepalive  rep 20  rps=  681.66  P99=  47
+
+############## ip_hash ##############
+  nong may: lb-only/cold
+  ip_hash      lb-only      cold       rep  1  rps=  843.67  P99=  38
+  ip_hash      lb-only      cold       rep  2  rps=  860.00  P99=  38
+  ip_hash      lb-only      cold       rep  3  rps=  952.91  P99=  34
+  ip_hash      lb-only      cold       rep  4  rps=  966.99  P99=  33
+  ip_hash      lb-only      cold       rep  5  rps=  956.70  P99=  33
+  ip_hash      lb-only      cold       rep  6  rps=  909.44  P99=  35
+  ip_hash      lb-only      cold       rep  7  rps=  927.22  P99=  36
+  ip_hash      lb-only      cold       rep  8  rps=  885.07  P99=  37
+  ip_hash      lb-only      cold       rep  9  rps=  932.06  P99=  35
+  ip_hash      lb-only      cold       rep 10  rps=  920.92  P99=  36
+  ip_hash      lb-only      cold       rep 11  rps=  912.02  P99=  36
+  ip_hash      lb-only      cold       rep 12  rps=  942.19  P99=  35
+  ip_hash      lb-only      cold       rep 13  rps=  933.64  P99=  35
+  ip_hash      lb-only      cold       rep 14  rps=  865.82  P99=  38
+  ip_hash      lb-only      cold       rep 15  rps=  896.68  P99=  38
+  ip_hash      lb-only      cold       rep 16  rps=  915.50  P99=  34
+  ip_hash      lb-only      cold       rep 17  rps=  905.45  P99=  36
+  ip_hash      lb-only      cold       rep 18  rps=  950.87  P99=  34
+  ip_hash      lb-only      cold       rep 19  rps=  876.32  P99=  35
+  ip_hash      lb-only      cold       rep 20  rps=  833.67  P99=  38
+  nong may: lb-only/keepalive
+  ip_hash      lb-only      keepalive  rep  1  rps=23839.99  P99=   3
+  ip_hash      lb-only      keepalive  rep  2  rps=27404.02  P99=   5
+  ip_hash      lb-only      keepalive  rep  3  rps=29578.21  P99=   2
+  ip_hash      lb-only      keepalive  rep  4  rps=36500.35  P99=   2
+  ip_hash      lb-only      keepalive  rep  5  rps=28317.38  P99=   3
+  ip_hash      lb-only      keepalive  rep  6  rps=32033.14  P99=   2
+  ip_hash      lb-only      keepalive  rep  7  rps=31530.16  P99=   3
+  ip_hash      lb-only      keepalive  rep  8  rps=32679.03  P99=   2
+  ip_hash      lb-only      keepalive  rep  9  rps=31872.17  P99=   3
+  ip_hash      lb-only      keepalive  rep 10  rps=39805.22  P99=   1
+  ip_hash      lb-only      keepalive  rep 11  rps=28117.00  P99=   2
+  ip_hash      lb-only      keepalive  rep 12  rps=30926.24  P99=   2
+  ip_hash      lb-only      keepalive  rep 13  rps=20927.80  P99=   6
+  ip_hash      lb-only      keepalive  rep 14  rps=36291.49  P99=   2
+  ip_hash      lb-only      keepalive  rep 15  rps=31677.98  P99=   2
+  ip_hash      lb-only      keepalive  rep 16  rps=27714.14  P99=   2
+  ip_hash      lb-only      keepalive  rep 17  rps=37275.42  P99=   2
+  ip_hash      lb-only      keepalive  rep 18  rps=32851.87  P99=   2
+  ip_hash      lb-only      keepalive  rep 19  rps=27019.72  P99=   4
+  ip_hash      lb-only      keepalive  rep 20  rps=23561.57  P99=   2
+  nong may: healthz/cold
+  ip_hash      healthz      cold       rep  1  rps=  878.57  P99=  36
+  ip_hash      healthz      cold       rep  2  rps=  903.75  P99=  35
+  ip_hash      healthz      cold       rep  3  rps=  866.20  P99=  38
+  ip_hash      healthz      cold       rep  4  rps=  908.39  P99=  36
+  ip_hash      healthz      cold       rep  5  rps=  904.74  P99=  36
+  ip_hash      healthz      cold       rep  6  rps=  893.60  P99=  35
+  ip_hash      healthz      cold       rep  7  rps=  767.74  P99=  43
+  ip_hash      healthz      cold       rep  8  rps=  862.46  P99=  36
+  ip_hash      healthz      cold       rep  9  rps=  887.32  P99=  37
+  ip_hash      healthz      cold       rep 10  rps=  891.98  P99=  36
+  ip_hash      healthz      cold       rep 11  rps=  852.73  P99=  40
+  ip_hash      healthz      cold       rep 12  rps=  814.99  P99=  40
+  ip_hash      healthz      cold       rep 13  rps=  864.28  P99=  37
+  ip_hash      healthz      cold       rep 14  rps=  777.57  P99=  47
+  ip_hash      healthz      cold       rep 15  rps=  844.38  P99=  41
+  ip_hash      healthz      cold       rep 16  rps=  785.17  P99=  42
+  ip_hash      healthz      cold       rep 17  rps=  761.68  P99=  45
+  ip_hash      healthz      cold       rep 18  rps=  864.10  P99=  37
+  ip_hash      healthz      cold       rep 19  rps=  876.76  P99=  38
+  ip_hash      healthz      cold       rep 20  rps=  888.44  P99=  37
+  nong may: healthz/keepalive
+  ip_hash      healthz      keepalive  rep  1  rps=  856.41  P99=  39
+  ip_hash      healthz      keepalive  rep  2  rps=  891.99  P99=  35
+  ip_hash      healthz      keepalive  rep  3  rps=  791.18  P99=  47
+  ip_hash      healthz      keepalive  rep  4  rps=  772.67  P99=  49
+  ip_hash      healthz      keepalive  rep  5  rps=  759.52  P99=  46
+  ip_hash      healthz      keepalive  rep  6  rps=  802.09  P99=  42
+  ip_hash      healthz      keepalive  rep  7  rps=  822.20  P99=  41
+  ip_hash      healthz      keepalive  rep  8  rps=  812.78  P99=  40
+  ip_hash      healthz      keepalive  rep  9  rps=  796.91  P99=  45
+  ip_hash      healthz      keepalive  rep 10  rps=  839.31  P99=  41
+  ip_hash      healthz      keepalive  rep 11  rps=  878.33  P99=  39
+  ip_hash      healthz      keepalive  rep 12  rps=  847.32  P99=  38
+  ip_hash      healthz      keepalive  rep 13  rps=  820.07  P99=  40
+  ip_hash      healthz      keepalive  rep 14  rps=  814.92  P99=  45
+  ip_hash      healthz      keepalive  rep 15  rps=  809.51  P99=  43
+  ip_hash      healthz      keepalive  rep 16  rps=  807.12  P99=  42
+  ip_hash      healthz      keepalive  rep 17  rps=  819.91  P99=  38
+  ip_hash      healthz      keepalive  rep 18  rps=  804.56  P99=  40
+  ip_hash      healthz      keepalive  rep 19  rps=  810.66  P99=  41
+  ip_hash      healthz      keepalive  rep 20  rps=  785.99  P99=  45
+  nong may: dbping.php/cold
+  ip_hash      dbping.php   cold       rep  1  rps=  629.73  P99=  49
+  ip_hash      dbping.php   cold       rep  2  rps=  638.80  P99=  51
+  ip_hash      dbping.php   cold       rep  3  rps=  608.81  P99=  55
+  ip_hash      dbping.php   cold       rep  4  rps=  609.42  P99=  54
+  ip_hash      dbping.php   cold       rep  5  rps=  630.99  P99=  49
+  ip_hash      dbping.php   cold       rep  6  rps=  645.24  P99=  51
+  ip_hash      dbping.php   cold       rep  7  rps=  620.90  P99=  52
+  ip_hash      dbping.php   cold       rep  8  rps=  594.28  P99=  56
+  ip_hash      dbping.php   cold       rep  9  rps=  626.61  P99=  53
+  ip_hash      dbping.php   cold       rep 10  rps=  633.11  P99=  51
+  ip_hash      dbping.php   cold       rep 11  rps=  616.23  P99=  58
+  ip_hash      dbping.php   cold       rep 12  rps=  594.27  P99=  54
+  ip_hash      dbping.php   cold       rep 13  rps=  627.66  P99=  50
+  ip_hash      dbping.php   cold       rep 14  rps=  636.58  P99=  51
+  ip_hash      dbping.php   cold       rep 15  rps=  618.00  P99=  58
+  ip_hash      dbping.php   cold       rep 16  rps=  600.49  P99=  55
+  ip_hash      dbping.php   cold       rep 17  rps=  627.03  P99=  57
+  ip_hash      dbping.php   cold       rep 18  rps=  621.00  P99=  54
+  ip_hash      dbping.php   cold       rep 19  rps=  630.00  P99=  52
+  ip_hash      dbping.php   cold       rep 20  rps=  621.85  P99=  50
+  nong may: dbping.php/keepalive
+  ip_hash      dbping.php   keepalive  rep  1  rps=  618.98  P99=  52
+  ip_hash      dbping.php   keepalive  rep  2  rps=  623.62  P99=  50
+  ip_hash      dbping.php   keepalive  rep  3  rps=  614.47  P99=  54
+  ip_hash      dbping.php   keepalive  rep  4  rps=  592.36  P99=  55
+  ip_hash      dbping.php   keepalive  rep  5  rps=  621.56  P99=  51
+  ip_hash      dbping.php   keepalive  rep  6  rps=  617.83  P99=  51
+  ip_hash      dbping.php   keepalive  rep  7  rps=  608.26  P99=  61
+  ip_hash      dbping.php   keepalive  rep  8  rps=  627.08  P99=  51
+  ip_hash      dbping.php   keepalive  rep  9  rps=  615.84  P99=  55
+  ip_hash      dbping.php   keepalive  rep 10  rps=  624.84  P99=  54
+  ip_hash      dbping.php   keepalive  rep 11  rps=  629.24  P99=  50
+  ip_hash      dbping.php   keepalive  rep 12  rps=  612.25  P99=  55
+  ip_hash      dbping.php   keepalive  rep 13  rps=  616.03  P99=  53
+  ip_hash      dbping.php   keepalive  rep 14  rps=  624.53  P99=  52
+  ip_hash      dbping.php   keepalive  rep 15  rps=  619.56  P99=  52
+  ip_hash      dbping.php   keepalive  rep 16  rps=  646.49  P99=  51
+  ip_hash      dbping.php   keepalive  rep 17  rps=  589.30  P99=  56
+  ip_hash      dbping.php   keepalive  rep 18  rps=  610.07  P99=  59
+  ip_hash      dbping.php   keepalive  rep 19  rps=  642.13  P99=  48
+  ip_hash      dbping.php   keepalive  rep 20  rps=  633.35  P99=  50
+
+Da ghi results/bench/matrix-20260929-103024.csv  (378 mau)

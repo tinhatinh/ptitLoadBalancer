@@ -1,0 +1,17 @@
+nhan=round_robin  n=600  concurrency=20  stamp=20260929-092424
+Complete requests:      600
+Failed requests:        0
+Requests per second:    864.00 [#/sec] (mean)
+Time per request:       23.148 [ms] (mean)
+Time per request:       1.157 [ms] (mean, across all concurrent requests)
+50%     22
+95%     33
+99%     46
+
+Phan phối node theo access log của load balancer:
+  web01    202
+  web02    200
+  web03    198
+
+So request phai thu lai o node khac (upstream co hai dia chi):
+0

@@ -1,0 +1,45 @@
+@startuml
+' Hinh: - Phien de tren tung node so voi phien de o kho dung chung
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam rectangleBorderColor #33475B
+skinparam ArrowColor #33475B
+
+package "Phương án 1: phiên nằm trong node" {
+  rectangle "Người dùng\nphiên abc123" as U1 #EFE6F7
+  rectangle "Bộ cân bằng tải\nbuộc dùng ip hash" as L1 #DCE9F7
+  rectangle "Node 1\ngiữ abc123" as S1 #DFF0DF
+  rectangle "Node 2\nkhông có abc123" as S2 #FFF3D6
+
+  U1 -right-> L1
+  L1 -down-> S1 : luôn về đây
+  L1 .right.> S2 : không được chọn
+}
+note bottom of S1
+  Node 1 hỏng thì mọi người
+  dùng của node mất phiên
+  cùng một lúc
+end note
+
+package "Phương án 2: phiên nằm ở kho dùng chung" {
+  rectangle "Người dùng\nphiên abc123" as U2 #EFE6F7
+  rectangle "Bộ cân bằng tải\ntự do chọn node" as L2 #DCE9F7
+  rectangle "Node 1" as T1 #FFFFFF
+  rectangle "Node 2" as T2 #FFFFFF
+  rectangle "Kho phiên dùng chung\nabc123 -> user danhpt" as SH #DFF0DF
+
+  U2 -right-> L2
+  L2 -down-> T1
+  L2 -down-> T2
+  T1 -down-> SH
+  T2 -down-> SH
+}
+note bottom of SH
+  Node nào cũng đọc được
+  phiên của người dùng nào.
+  Một node hỏng không làm
+  mất phiên.
+end note
+@enduml

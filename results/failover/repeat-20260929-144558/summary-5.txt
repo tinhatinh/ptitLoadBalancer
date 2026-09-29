@@ -1,0 +1,13 @@
+== KET QUA DO FAILOVER ==
+Tong so mau                  : 177
+So mau co HTTP != 200        : 0
+Thoi gian dap ung trung binh : 0.1296 s
+Thoi gian dap ung lon nhat   : 2.1386 s
+
+Nguoi dung khong nhan ma loi nao trong suot ky do.
+Mau phai chiu thoi gian cho vuot 1 s (nginx thu lai node da chet) : 10
+
+-- Phan phoi node trong ky do --
+  web01      71
+  web02      35
+  web03      71

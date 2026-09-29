@@ -1,0 +1,29 @@
+@startuml
+' Hinh: - Nguyen ly least connection: chon node co it ket noi dang mo nhat
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam rectangleBorderColor #33475B
+skinparam ArrowColor #33475B
+
+rectangle "Yêu cầu mới đến" as REQ #EFE6F7
+rectangle "**Bộ cân bằng tải**\nđếm số kết nối đang mở của từng thành viên" as LB #DCE9F7
+
+rectangle "Node 1\n9 kết nối đang mở" as N1 #F6D7D7
+rectangle "Node 2\n**2 kết nối đang mở**\n=> được chọn" as N2 #DFF0DF
+rectangle "Node 3\n6 kết nối đang mở" as N3 #FFF3D6
+
+REQ -right-> LB
+LB -down-> N1 : bỏ qua
+LB -down-> N2 : **chuyển yêu cầu**
+LB -down-> N3 : bỏ qua
+
+note bottom of LB
+  Node trả lời chậm sẽ tích
+  lũy nhiều kết nối mở và tự
+  động nhận ít yêu cầu hơn.
+  Có trọng số: so sánh theo
+  tỉ lệ kết nối mở trên trọng số.
+end note
+@enduml

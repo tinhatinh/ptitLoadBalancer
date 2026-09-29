@@ -1,0 +1,51 @@
+This is ApacheBench, Version 2.3 <$Revision: 1923142 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 192.168.240.10 (be patient)
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Finished 600 requests
+
+
+Server Software:        nginx
+Server Hostname:        192.168.240.10
+Server Port:            443
+SSL/TLS Protocol:       TLSv1.3,TLS_AES_256_GCM_SHA384,2048,256
+Server Temp Key:        X25519 253 bits
+
+Document Path:          /healthz
+Document Length:        30 bytes
+
+Concurrency Level:      20
+Time taken for tests:   0.645 seconds
+Complete requests:      600
+Failed requests:        0
+Total transferred:      301800 bytes
+HTML transferred:       18000 bytes
+Requests per second:    929.53 [#/sec] (mean)
+Time per request:       21.516 [ms] (mean)
+Time per request:       1.076 [ms] (mean, across all concurrent requests)
+Transfer rate:          456.60 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        3   12   4.4     12      32
+Processing:     2    9   4.2      8      27
+Waiting:        1    7   4.4      6      27
+Total:          6   21   6.2     21      43
+
+Percentage of the requests served within a certain time (ms)
+  50%     21
+  66%     23
+  75%     24
+  80%     25
+  90%     29
+  95%     32
+  98%     37
+  99%     40
+ 100%     43 (longest request)

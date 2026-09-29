@@ -1,0 +1,31 @@
+# session_test mode=file stamp=20260929-130031
+# load_balancer_algorithm=ip_hash;
+
+## Buoc 1. Dang nhap
+login_http_code=302
+login_node=web01
+session_cookie=DE07SID=<da-che>; path=/; secure; HttpOnly; SameSite=Lax
+
+## Buoc 2. Tat dung node vua phuc vu dang nhap: web01
+ Container de07-web01 Stopping 
+ Container de07-web01 Stopped 
+
+## Buoc 3. Goi lai /member.php 10 lan bang cookie cu
+ 1  code=302 node=web03  redirect=/login.php
+ 2  code=302 node=web03  redirect=/login.php
+ 3  code=302 node=web03  redirect=/login.php
+ 4  code=302 node=web03  redirect=/login.php
+ 5  code=302 node=web03  redirect=/login.php
+ 6  code=302 node=web03  redirect=/login.php
+ 7  code=302 node=web03  redirect=/login.php
+ 8  code=302 node=web03  redirect=/login.php
+ 9  code=302 node=web03  redirect=/login.php
+10  code=302 node=web03  redirect=/login.php
+
+Tong ket: 200_giu_duoc_phien=0   302_mat_phien=10   khac=0
+
+## Buoc 4. Bat lai web01
+ Container de07-web01 Starting 
+ Container de07-web01 Started 
+
+## Buoc 5. Tra cum ve cau hinh mac dinh (redis + least_conn)

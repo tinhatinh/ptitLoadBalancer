@@ -1,0 +1,15 @@
+nhan=ip_hash  n=600  concurrency=20  stamp=20260929-092459
+Complete requests:      600
+Failed requests:        0
+Requests per second:    929.53 [#/sec] (mean)
+Time per request:       21.516 [ms] (mean)
+Time per request:       1.076 [ms] (mean, across all concurrent requests)
+50%     21
+95%     32
+99%     40
+
+Phan phối node theo access log của load balancer:
+  web01    600
+
+So request phai thu lai o node khac (upstream co hai dia chi):
+0

@@ -1,0 +1,26 @@
+==================================================================
+ KIEM TRA AN TOAN WEB SERVER CLUSTER    20260929-152524
+ Load balancer 192.168.240.10 | may do client01 192.168.240.20
+==================================================================
+  [PASS] An phien ban trong header Server               server_tokens off tai load balancer
+  [PASS] Khong ro X-Powered-By cua PHP                  proxy_hide_header o LB
+  [PASS] Co header Strict-Transport-Security            max-age 31536000
+  [PASS] Co header X-Content-Type-Options               nosniff
+  [PASS] Co header Content-Security-Policy              default-src self
+  [PASS] Cong 80 chuyen cuong buc sang HTTPS            HTTP chi dung de redirect
+  [PASS] Thuong luong duoc TLS 1.2 tro len              ket qua TLSv1.3
+  [PASS] Cookie phien mang co ky HttpOnly               cookie_httponly
+  [PASS] Cookie phien mang co ky Secure                 chi gui di qua HTTPS
+  [PASS] Cookie phien mang co SameSite                  SameSite=Lax
+  [PASS] Khong goi truc tiep duoc thu vien rieng        location ^~ /lib/
+  [PASS] Healthz khong lo thong tin he thong            body: {"status":"ok","node":"web03"}
+  [PASS] Rate limit chan request gui qua nhanh          193/200 nhan 429 (burst=5)
+  [PASS] Thu muc config cua ung dung bi node chan       location = /config.php
+  [PASS] Node web khong goi duoc tu mang phia ngoai     mang backend internal
+  [PASS] Node tu choi container khong phai load balancer allow 172.20.0.10 o node, truoc day tra 200
+  [PASS] Node web khong co duong ra Internet            khong tai duoc package
+  [PASS] Node ghi dung dia chi khach hang sau can bang tai client=192.168.240.20 trong node_trace
+  [PASS] Moi node tra ve cung mot noi dung              ba node chi ra 1 hash
+------------------------------------------------------------------
+  TONG KET:  PASS=19   FAIL=0   SKIP=0   GHI_NHAN=0
+==================================================================

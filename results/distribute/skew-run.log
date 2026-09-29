@@ -1,0 +1,71 @@
+
+############## round_robin ##############
+  lam nong may
+  round_robin  rep  1  200 200 200 0 0
+  round_robin  rep  2  199 201 200 0 0
+  round_robin  rep  3  200 200 200 0 0
+  round_robin  rep  4  200 200 200 0 0
+  round_robin  rep  5  201 199 200 0 0
+  round_robin  rep  6  200 200 200 0 0
+  round_robin  rep  7  200 200 200 0 0
+  round_robin  rep  8  200 200 200 0 0
+  round_robin  rep  9  199 202 199 0 0
+  round_robin  rep 10  199 199 202 0 0
+  round_robin  rep 11  201 200 199 0 0
+  round_robin  rep 12  200 201 199 0 0
+  round_robin  rep 13  200 199 201 0 0
+  round_robin  rep 14  200 200 200 0 0
+  round_robin  rep 15  200 200 200 0 0
+  round_robin  rep 16  200 200 200 0 0
+  round_robin  rep 17  200 200 200 0 0
+  round_robin  rep 18  200 200 200 0 0
+  round_robin  rep 19  199 200 201 0 0
+  round_robin  rep 20  201 200 199 0 0
+
+############## least_conn ##############
+  lam nong may
+  least_conn   rep  1  201 197 202 0 0
+  least_conn   rep  2  194 204 202 0 0
+  least_conn   rep  3  199 203 198 0 0
+  least_conn   rep  4  203 194 203 0 0
+  least_conn   rep  5  196 208 196 0 0
+  least_conn   rep  6  197 207 196 0 0
+  least_conn   rep  7  197 203 200 0 0
+  least_conn   rep  8  202 199 199 0 0
+  least_conn   rep  9  202 202 196 0 0
+  least_conn   rep 10  207 198 195 0 0
+  least_conn   rep 11  200 193 207 0 0
+  least_conn   rep 12  204 200 196 0 0
+  least_conn   rep 13  197 208 195 0 0
+  least_conn   rep 14  205 184 211 0 0
+  least_conn   rep 15  197 196 207 0 0
+  least_conn   rep 16  201 202 197 0 0
+  least_conn   rep 17  191 208 201 0 0
+  least_conn   rep 18  200 197 203 0 0
+  least_conn   rep 19  199 207 194 0 0
+  least_conn   rep 20  206 200 194 0 0
+
+############## ip_hash ##############
+  lam nong may
+  ip_hash      rep  1  600 0 0 0 0
+  ip_hash      rep  2  600 0 0 0 0
+  ip_hash      rep  3  600 0 0 0 0
+  ip_hash      rep  4  600 0 0 0 0
+  ip_hash      rep  5  600 0 0 0 0
+  ip_hash      rep  6  600 0 0 0 0
+  ip_hash      rep  7  600 0 0 0 0
+  ip_hash      rep  8  600 0 0 0 0
+  ip_hash      rep  9  600 0 0 0 0
+  ip_hash      rep 10  600 0 0 0 0
+  ip_hash      rep 11  600 0 0 0 0
+  ip_hash      rep 12  600 0 0 0 0
+  ip_hash      rep 13  600 0 0 0 0
+  ip_hash      rep 14  600 0 0 0 0
+  ip_hash      rep 15  600 0 0 0 0
+  ip_hash      rep 16  600 0 0 0 0
+  ip_hash      rep 17  600 0 0 0 0
+  ip_hash      rep 18  600 0 0 0 0
+  ip_hash      rep 19  600 0 0 0 0
+  ip_hash      rep 20  600 0 0 0 0
+
+Da ghi results/distribute/skew-20260929-111559.csv  (63 luong)

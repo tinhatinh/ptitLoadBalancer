@@ -1,0 +1,31 @@
+# session_test mode=redis stamp=20260929-125936
+# load_balancer_algorithm=least_conn;
+
+## Buoc 1. Dang nhap
+login_http_code=302
+login_node=web01
+session_cookie=DE07SID=<da-che>; path=/; secure; HttpOnly; SameSite=Lax
+
+## Buoc 2. Tat dung node vua phuc vu dang nhap: web01
+ Container de07-web01 Stopping 
+ Container de07-web01 Stopped 
+
+## Buoc 3. Goi lai /member.php 10 lan bang cookie cu
+ 1  code=200 node=web02  
+ 2  code=200 node=web02  
+ 3  code=200 node=web02  
+ 4  code=200 node=web02  
+ 5  code=200 node=web02  
+ 6  code=200 node=web03  
+ 7  code=200 node=web02  
+ 8  code=200 node=web03  
+ 9  code=200 node=web02  
+10  code=200 node=web03  
+
+Tong ket: 200_giu_duoc_phien=10   302_mat_phien=0   khac=0
+
+## Buoc 4. Bat lai web01
+ Container de07-web01 Starting 
+ Container de07-web01 Started 
+
+## Buoc 5. Tra cum ve cau hinh mac dinh (redis + least_conn)
