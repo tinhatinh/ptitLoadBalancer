@@ -301,20 +301,27 @@ kết quả riêng `results/attacks/`.
 
 ```bash
 python - <<'PY'
-import io, glob, re
+import io, os, re
 pat = re.compile(r'(DE07SID[\t=]|password=)[^&\s"\'|]+')
-for p in glob.glob('results/**/*', recursive=True):
-    try:
-        s = io.open(p, encoding='utf-8', errors='ignore').read()
-    except Exception:
-        continue
-    t = pat.sub(lambda m: m.group(1) + '<da-che>', s)
-    if t != s:
-        io.open(p, 'w', encoding='utf-8', newline='').write(t)
+changed = []
+for root, dirs, files in os.walk('results'):
+    for fn in files:
+        p = os.path.join(root, fn)
+        try:
+            s = io.open(p, encoding='utf-8', errors='ignore').read()
+        except OSError:
+            continue                       # co the la thu muc hoac file nhi phan
+        t = pat.sub(lambda m: m.group(1) + '<da-che>', s)
+        if t != s:
+            io.open(p, 'w', encoding='utf-8', newline='').write(t)
+            changed.append(p)
+print('da che', len(changed), 'file')
 PY
 ```
 
-Mẫu `DE07SID[\t=]` bắt cả hai nơi định danh phiên xuất hiện: header
+`session_client.sh` nay in thẳng `DE07SID=<da-che>` ra kết quả nên thông thường
+không còn gì phải che. Chạy đoạn trên là biện pháp dự phòng khi bạn thêm script
+mới. Mẫu `DE07SID[\t=]` bắt cả hai nơi định danh phiên xuất hiện: header
 `Set-Cookie: DE07SID=...` và cột tab của cookie jar. Sau khi chạy, dùng lại lệnh
 kiểm tra ở mục 0 để xác nhận không còn token nào.
 

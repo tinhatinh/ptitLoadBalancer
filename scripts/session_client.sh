@@ -27,7 +27,11 @@ login)
     SETCOOKIE="$(tr -d '\r' < "$HDR" | awk -F': ' 'tolower($1)=="set-cookie"{print $2}')"
     echo "login_http_code=$CODE"
     echo "login_node=${NODE:-none}"
-    echo "session_cookie=$SETCOOKIE"
+    # In ten cookie va cac co, khong in gia tri. Doan nay duoc tee vao
+    # results/session/*.txt va results/ duoc git theo doi, nen ghi nguyen
+    # dinh danh phien thi day mot phien that len repo. Bao cao chi can chung
+    # minh co HttpOnly/Secure/SameSite, khong can SID.
+    echo "session_cookie=$(printf '%s' "$SETCOOKIE" | sed -E 's/^([A-Za-z0-9_]+)=[^;]*/\1=<da-che>/')"
     ;;
 
 probe)
