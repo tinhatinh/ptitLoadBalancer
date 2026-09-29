@@ -56,6 +56,29 @@ wait_db() {
     return 1
 }
 
+# Thuat toan that ma nginx dang chay, doc tu file cau hinh da sinh trong
+# container. Khong doc tu bien moi truong cua Git Bash: .env chi do compose doc,
+# nen bien ay luan rong va ghan nham ten thuat toan cho mot phep do.
+current_algorithm() {
+    conf="$(docker compose exec -T lb01 sed -n '1,8p' /etc/nginx/conf.d/default.conf 2>/dev/null | tr -d '')"
+    if printf '%s' "$conf" | grep -q 'ip_hash'; then echo ip_hash
+    elif printf '%s' "$conf" | grep -q 'least_conn'; then echo least_conn
+    else echo round_robin; fi
+}
+
+set_algorithm() {  # $1 = directive day vao khoi upstream
+    LB_ALGO_DIRECTIVE="$1" docker compose up -d --force-recreate --no-deps lb01 >/dev/null 2>&1
+    wait_ready >/dev/null || return 1
+}
+
+# Lenh nao doi thuat toan hoac tat node phai tra cum ve trang thai mac dinh khi
+# ket thuc, ke ca bi Ctrl-C hay chet giua chung. Thieu do thi phep do ke tiep
+# chay tren mot cau hinh khong ai ngu.
+restore_defaults() {
+    LB_ALGO_DIRECTIVE="least_conn;" docker compose up -d --force-recreate --no-deps lb01 >/dev/null 2>&1
+    docker compose start web01 web02 web03 >/dev/null 2>&1
+}
+
 cmd="${1:-help}"
 shift || true
 
@@ -89,8 +112,7 @@ shell)
 
 dist)
     N="${1:-300}"
-    ALG="${LB_ALGO_DIRECTIVE:-least_conn;}"
-    docker compose exec -T client01 bash /scripts/distribute.sh "$N" "${ALG%%;*}"
+    docker compose exec -T client01 bash /scripts/distribute.sh "$N" "$(current_algorithm)"
     ;;
 
 dist-all)
@@ -103,20 +125,19 @@ dist-all)
         directive="${spec#*|}"
         echo ""
         echo "############## THUAT TOAN: ${name} ##############"
-        LB_ALGO_DIRECTIVE="$directive" docker compose up -d --force-recreate --no-deps lb01 >/dev/null
-        wait_ready || exit 1
+        set_algorithm "$directive" || { restore_defaults; exit 1; }
         # Luu lai khoi upstream thuc te ma nginx dang dung, de bang so lieu
         # kiem chung duoc la thuat toan da doi qua that.
         docker compose cp lb01:/etc/nginx/conf.d/default.conf \
-            "results/distribute/rendered-${name}.conf" 2>/dev/null
+            "results/distribute/rendered-${name}-seq.conf" 2>/dev/null
         docker compose exec -T client01 bash /scripts/distribute.sh 300 "$name"
         sleep 12
     done
-    LB_ALGO_DIRECTIVE="least_conn;" docker compose up -d --force-recreate --no-deps lb01 >/dev/null
+    restore_defaults
     ;;
 
 dist-c)
-    bash scripts/dist_concurrent.sh "${LB_ALGO_DIRECTIVE:-least_conn}" "${1:-600}" "${2:-20}"
+    bash scripts/dist_concurrent.sh "$(current_algorithm)" "${1:-600}" "${2:-20}"
     ;;
 
 dist-all-c)
@@ -129,11 +150,11 @@ dist-all-c)
         LB_ALGO_DIRECTIVE="$directive" docker compose up -d --force-recreate --no-deps lb01 >/dev/null
         wait_ready || exit 1
         docker compose cp lb01:/etc/nginx/conf.d/default.conf \
-            "results/distribute/rendered-${name}.conf" 2>/dev/null
+            "results/distribute/rendered-${name}-concurrent.conf" 2>/dev/null
         bash scripts/dist_concurrent.sh "$name" 600 20
         sleep 12
     done
-    LB_ALGO_DIRECTIVE="least_conn;" docker compose up -d --force-recreate --no-deps lb01 >/dev/null
+    restore_defaults
     ;;
 
 failover)
@@ -149,6 +170,7 @@ sec)
     ;;
 
 bench)
+    trap restore_defaults EXIT INT TERM
     echo "=== 3 node ==="
     bash scripts/bench.sh 3-node 1500 30
     echo ""
@@ -162,20 +184,20 @@ bench)
 # Ba lenh duoi nay la cac phep do that cua muc 3.2.2 va 3.5 trong bao cao.
 # Moi lenh tu dat thuat toan va tu lam nong may, chay trong khoang 5-45 phut.
 dist-skew)
-    bash scripts/dist_matrix.sh "${2:-20}" "${3:-600}" "${4:-20}"
+    bash scripts/dist_matrix.sh "${1:-20}" "${2:-600}" "${3:-20}"
     ;;
 
 bench-matrix)
-    bash scripts/bench_matrix.sh "${2:-20}" "${3:-3000}" "${4:-20}"
+    bash scripts/bench_matrix.sh "${1:-20}" "${2:-3000}" "${3:-20}"
     ;;
 
 bench-degrade)
-    bash scripts/bench_degrade.sh "${2:-20}" "${3:-3000}" "${4:-20}"
+    bash scripts/bench_degrade.sh "${1:-20}" "${2:-3000}" "${3:-20}"
     ;;
 
 report)
     # In lai dung cac con so nam trong bang bao cao, doc tu results/.
-    python REPORT/analyze_bench.py "${2:-all}"
+    python REPORT/analyze_bench.py "${1:-all}"
     ;;
 
 all)

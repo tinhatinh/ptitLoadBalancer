@@ -393,7 +393,18 @@ def view_failover(show):
 def main():
     what = (sys.argv[1] if len(sys.argv) > 1 else 'all').lower()
     show = what != 'json'
+    agg_path = os.path.join(HERE, 'bench_summary.json')
     data = {}
+    if os.path.exists(agg_path):
+        # Doc lai file cu de giu nguyen cac phan khong chay lan nay. truoc day
+        # file chi bi ghi khi goi 'all', nen `analyze_bench.py skew` in ra so
+        # moi trong khi bench_summary.json van la so cu, va make_charts.py ve
+        # bieu do tu so cu do con bang trong bao cao doc so moi.
+        try:
+            with open(agg_path, encoding='utf-8') as f:
+                data.update(json.load(f))
+        except (ValueError, OSError) as exc:
+            print('bench_summary.json doc khong duoc (%s), viet lai tu dau' % exc)
     if what in ('all', 'matrix', 'json'):
         m, t, l = view_matrix(show)
         data['matrix'] = m
@@ -405,13 +416,10 @@ def main():
         data['degrade'] = view_degrade(show)
     if what in ('all', 'failover', 'json'):
         data['failover'] = view_failover(show)
-    if what in ('all', 'json'):
-        # Ghi file chi khi tong hop du ba view. Chay tung view rieng de doc
-        # thi ma ghi de len file se de lai mot bench_summary thieu key, va
-        # make_charts.py ty le vao do.
-        json.dump(data, open(os.path.join(HERE, 'bench_summary.json'), 'w',
-                             encoding='utf-8'), indent=1, ensure_ascii=False)
-        print('\nda ghi bench_summary.json')
+    json.dump(data, open(agg_path, 'w', encoding='utf-8'), indent=1,
+              ensure_ascii=False)
+    if show:
+        print('\nda cap nhat bench_summary.json: %s' % ', '.join(sorted(data)))
 
 
 if __name__ == '__main__':

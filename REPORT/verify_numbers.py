@@ -436,6 +436,37 @@ def main():
     if stale:
         problems.append('gia tri khong co trong do luong: %s' % sorted(set(stale)))
 
+    # ---- hinh ve co cu hon du lieu no the hien khong ----
+    # So in trong bang doi chieu duoc o tren, nhung con so nam BEN TRONG mot
+    # file PNG thi khong kiem tra bang duoc. Cach duy nhat phat hien bieu do
+    # ve tu số lieu cu là so thoi gian cua anh voi thoi gian cua nguon no.
+    FIGS = os.path.join(HERE, 'figures')
+    SHOTS = os.path.join(HERE, 'screenshots')
+    CHART_SRC = {'do-thai-failover.png': os.path.join(RESULTS, 'failover'),
+                 'phoi-canh-dong-thoi.png': os.path.join(HERE, 'bench_summary.json'),
+                 'do-thi-thong-qua.png': os.path.join(HERE, 'bench_summary.json')}
+    for png in sorted(glob.glob(os.path.join(FIGS, '*.png'))):
+        name = os.path.basename(png)
+        src = None
+        if name in CHART_SRC:
+            src = CHART_SRC[name]
+        elif name.startswith('anh-hinh-'):
+            shot = os.path.join(SHOTS, name[len('anh-'):])
+            src = shot if os.path.exists(shot) else None
+        elif os.path.exists(os.path.join(FIGS, name[:-4] + '.puml')):
+            src = os.path.join(FIGS, name[:-4] + '.puml')
+        if src is None:
+            problems.append('hinh %s khong co nguon de doi chieu thoi gian' % name)
+            continue
+        if os.path.isdir(src):
+            newest_src = max([os.path.getmtime(os.path.join(src, f))
+                              for f in os.listdir(src)] or [0.0])
+        else:
+            newest_src = os.path.getmtime(src)
+        if newest_src > os.path.getmtime(png) + 1:
+            problems.append('hinh %s cu hon nguon cua no (%s)'
+                            % (name, os.path.basename(src)))
+
     # ---- ket luan tong hop lai so lieu ----
     kl = texts['ket-luan.md']
     for alg in ('round_robin', 'least_conn'):

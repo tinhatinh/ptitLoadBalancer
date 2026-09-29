@@ -34,13 +34,26 @@ plt.rcParams.update({
 COLOR = {'web01': '#2F6FA8', 'web02': '#3E8E5A', 'web03': '#C08A2E',
          'none': '#B03030'}
 ALGOS = ('round_robin', 'least_conn', 'ip_hash')
+# Cung gia tri ma scripts/failover.sh dung khi goi docker compose stop.
+STOP_AT_SEC = 10
 
 
 def newest(pattern):
-    files = sorted(glob.glob(os.path.join(RESULTS, pattern)))
+    # Xep theo mtime giong analyze_bench.py va verify_numbers.py. Xep theo ten
+    # thi sau khi clone, thoi gian file doi thu tu va bieu do ve du lieu khac
+    # voi bang trong bao cao.
+    files = sorted(glob.glob(os.path.join(RESULTS, pattern)), key=os.path.getmtime)
     if not files:
         sys.exit('khong thay file: ' + pattern)
     return files[-1]
+
+
+def top(value, frac=0.12, floor=1.0):
+    """Canh tren truc tung tinh tu chinh du lieu. Hang so dong hard-code
+    (2150, 700, 900...) se cat mat mau cham nhat khi mot vong do cham hon du
+    kien ma khong bao ai biet."""
+    m = max(value) if value else 0.0
+    return max(floor, m * (1.0 + frac))
 
 
 def chart_failover():
@@ -56,7 +69,8 @@ def chart_failover():
     code = [r['http_code'] for r in rows]
 
     slow = [s for s, m in zip(sec, ms) if m > 1000]
-    stop_at = min(slow) - 1 if slow else None
+    # failover.sh luon tat node tai t=10s cua vong do. Truoc day lay "mau cham
+    # dau tien tru 1 giay": do la hang so viet tay, khong phai thoi diem tat.
 
     fig, ax = plt.subplots(figsize=(8.6, 3.6))
     for n in ('web01', 'web02', 'web03', 'none'):
@@ -69,22 +83,23 @@ def chart_failover():
         ax.scatter([sec[i] for i in bad], [ms[i] for i in bad], s=46,
                    facecolors='none', edgecolors='#B03030', linewidths=1.4,
                    label='HTTP != 200')
-    if stop_at is not None:
-        ax.axvline(stop_at, color='#B03030', linestyle='--', linewidth=1.2)
-        ax.annotate('tắt web02', xy=(stop_at, 900),
-                    xytext=(stop_at + 1.5, 1150),
-                    color='#B03030', fontsize=9)
-        # Diem bat lai node lay tu chinh du lieu: mau web02 som nhat xuat hien
-        # SAU mau cham cuoi cung, khong phai con so 40 s viet tay.
+    ymax = top(ms, 0.15)
+    ax.axvline(STOP_AT_SEC, color='#B03030', linestyle='--', linewidth=1.2)
+    ax.annotate('tắt web02 (t=%d s, theo giao thức đo)' % STOP_AT_SEC,
+                xy=(STOP_AT_SEC, ymax * .45), xytext=(STOP_AT_SEC + 1.5, ymax * .58),
+                color='#B03030', fontsize=8)
+    # Diem bat lai node lay tu chinh du lieu: mau web02 som nhat xuat hien
+    # SAU mau cham cuoi cung, khong phai con so viet tay.
+    if slow:
         after = max(slow)
         back = [s for s, k in zip(sec, node) if k == 'web02' and s > after]
         if back:
             rt = min(back)
             ax.axvline(rt, color='#3E8E5A', linestyle='--', linewidth=1.2)
-            ax.annotate('bật lại web02', xy=(rt, 900),
-                        xytext=(rt + 1.0, 1150),
-                        color='#3E8E5A', fontsize=9)
-    ax.set_ylim(0, 2150)
+            ax.annotate('bật lại web02', xy=(rt, ymax * .45),
+                        xytext=(rt + 1.0, ymax * .30),
+                        color='#3E8E5A', fontsize=8)
+    ax.set_ylim(0, ymax)
     ax.set_xlabel('Giây kể từ bắt đầu vòng đo')
     ax.set_ylabel('Thời gian đáp ứng (ms)')
     ax.legend(loc='upper right', ncol=4, fontsize=8, framealpha=.9)
@@ -130,8 +145,10 @@ def chart_distribution():
                      ('%.1f' % v).replace('.', ','), ha='center', fontsize=7)
     ax1.set_xticks(list(xs))
     ax1.set_xticklabels(algos, fontsize=9)
-    ax1.set_ylabel('Request phục vụ, trung bình 20 lượt')
-    ax1.set_ylim(0, 700)
+    nrep = max(skew[a]['nodes']['web01']['n'] for a in algos)
+    ax1.set_ylabel('Request phục vụ, trung bình %d lượt' % nrep)
+    ax1.set_ylim(0, top([skew[a]['nodes'][n]['mean'] + skew[a]['nodes'][n]['ci']
+                        for a in algos for n in nodes]))
     ax1.legend(ncol=3, fontsize=8)
     ax1.set_title('Độ đều của phân phối', fontsize=10)
 
@@ -145,7 +162,10 @@ def chart_distribution():
     ax2.set_xticklabels(algos, fontsize=9)
     ax2.set_ylabel('Chênh lệch lớn nhất giữa hai node')
     ax2.set_yscale('symlog', linthresh=1)
-    ax2.set_ylim(0, 1500)
+    # Truc symlog nen cong them mot khoang theo gia tri khong dem lieu duoc
+    # o dinh; nhan "600,0 ± 600,0" cua ip_hash nam ngay tren dau cot va bi cat
+    # sat nen khi de 30% van thieu.
+    ax2.set_ylim(0, top([m + e for m, e in zip(means, errs)], 1.6))
     ax2.set_title('Một lượt đo, sai số là nửa khoảng tin cậy 95%', fontsize=9)
     fig.tight_layout()
     out = os.path.join(FIGDIR, 'phoi-canh-dong-thoi.png')
@@ -178,7 +198,7 @@ def chart_throughput():
     for x, (v, e) in enumerate(zip(vals, errs)):
         ax1.text(x, v * 1.3, '%.0f' % v, ha='center', fontsize=8)
     ax1.set_yscale('log')
-    ax1.set_ylim(300, 120000)
+    ax1.set_ylim(min(vals) * 0.6, top(vals, 0.6))
     ax1.set_xticks(range(len(eps)))
     ax1.set_xticklabels(('/lb-only', '/healthz', '/dbping.php'), fontsize=9)
     ax1.set_ylabel('req/s (thang log)')
@@ -193,9 +213,10 @@ def chart_throughput():
         ax2.text(x, v + e + 12, '%.0f ± %.0f' % (v, e), ha='center', fontsize=8)
     ax2.set_xticks(range(len(algos)))
     ax2.set_xticklabels(algos, fontsize=9)
-    ax2.set_ylim(0, 900)
+    ax2.set_ylim(0, top([v + e for v, e in zip(vals, errs)]))
     ax2.set_ylabel('req/s')
-    ax2.set_title('Tầng ứng dụng /dbping.php, 20 lượt', fontsize=9)
+    ax2.set_title('Tầng ứng dụng /dbping.php, %d lượt'
+                  % m[algos[0]]['dbping.php']['keepalive']['n'], fontsize=9)
     fig.tight_layout()
     out = os.path.join(FIGDIR, 'do-thi-thong-qua.png')
     fig.savefig(out)

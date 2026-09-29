@@ -22,12 +22,14 @@ EDGE_RIGHT = 18        # thanh cuon cua Windows Terminal
 # (bieu tuong man hinh, thanh cua so) chi vai chuc. Nguong dong ngan cac dai
 # do git khung noi dung mo rong het chieu cao anh.
 MIN_ROW_PIX = 40
-# Anh duoc chen vao bao cao theo do rong cua cot van ban chu khong theo do
-# rong tuyet doi cua no, nen can quy doi do cao ra cm tai do rong ay.
-CONTENT_W_CM = 16.0
-# Cot van ban A4 cua mau cho mot hinh cao nhat khoang 24 cm: vuot qua muc
-# nay thi anh chiem het mot trang va khong con doc duoc nua.
-MAX_HEIGHT_CM = 24.0
+# Hai gia tri duoi day phai khop build_docx.py (MAX_FIG_WIDTH_CM va
+# MAX_FIG_HEIGHT_CM). Truoc day o day ghi 16 cm va 24 cm trong khi bai dung
+# that cat ve 15 cm va canh cao 16 cm, nen chieu cao in ra o day luon lon hon
+# chieu cao trong tai lieu va canh bao "hinh cao qua" khong bao gio bat duoc.
+CONTENT_W_CM = 15.0
+# Anh cao hon chieu cao van ban thi bi ep theo chieu cao, khong con theo ty le
+# do rong; do la luc can xem lai anh.
+MAX_HEIGHT_CM = 16.0
 
 
 def background_color(img):

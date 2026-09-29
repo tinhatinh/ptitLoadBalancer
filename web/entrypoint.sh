@@ -6,22 +6,40 @@ set -eu
 : "${DB_HOST:?DB_HOST is required}"
 
 sed "s|@NODE_NAME@|${NODE_NAME}|g" /etc/nginx/node.conf.tpl > /etc/nginx/node.conf
+# Neu phep thay the khong chay het, node van len may binh thuong nhung moi
+# request tra ve X-Node "@NODE_NAME@" va phep dem request roi vao node nao se
+# dem mot thung khong co that.
+if grep -q '@NODE_NAME@' /etc/nginx/node.conf; then
+    echo "node.conf con chura @NODE_NAME@ sau khi render" >&2
+    exit 1
+fi
 
 SESSION_DIR=/var/lib/php83/sessions
 mkdir -p "$SESSION_DIR"
 chown nobody:nobody "$SESSION_DIR"
 
-if [ "${SESSION_STORE:-redis}" = "redis" ]; then
+case "${SESSION_STORE:-redis}" in
+    redis)
+    : "${REDIS_PASSWORD:?REDIS_PASSWORD is required when SESSION_STORE=redis}"
     cat > /etc/php83/conf.d/99-session.ini <<EOF
 session.save_handler = redis
 session.save_path    = "tcp://${REDIS_HOST}:${REDIS_PORT:-6379}?auth=${REDIS_PASSWORD}&database=0&prefix=de07:"
 EOF
-else
+        ;;
+    file)
     cat > /etc/php83/conf.d/99-session.ini <<EOF
 session.save_handler = files
 session.save_path    = "${SESSION_DIR}"
 EOF
-fi
+        ;;
+    *)
+    # Truoc day moi gia tri khac "redis" im lang bi hieu la luu dia. Mot
+    # cai ten sai trong .env se bi hoi thanh "phien mat khi tat node" ma
+    # khong ai bao la cau hinh khong duoc hieu.
+    echo "SESSION_STORE='$SESSION_STORE' khong hop le (redis|file)" >&2
+    exit 1
+    ;;
+esac
 
 cat >> /etc/php83/conf.d/99-session.ini <<'EOF'
 

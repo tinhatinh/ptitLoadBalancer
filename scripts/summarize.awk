@@ -22,6 +22,14 @@ NR == 1 { next }
     cnt[node[n]]++
 }
 END {
+    # Mot file chi co dong tieu de khong phai la "khong co loi nao". No co
+    # nghia la vong do khong ghi duoc mau nao (loadloop chet som, sai duong
+    # dan, container khong chay). In bang day du voi 0 mau roi exit 0 la dung
+    # mot phep do khong do gi ca.
+    if (n == 0) {
+        printf "LOI: khong co mau nao trong file dau vao\n" > "/dev/stderr"
+        exit 1
+    }
     printf "== KET QUA DO FAILOVER ==\n"
     printf "Tong so mau                  : %d\n", n
     printf "So mau co HTTP != 200        : %d\n", err + 0

@@ -22,7 +22,12 @@ case "$TARGET" in
     web01) TARGET_IP="172.20.0.11" ;;
     web02) TARGET_IP="172.20.0.12" ;;
     web03) TARGET_IP="172.20.0.13" ;;
-    *)     TARGET_IP="" ;;
+    *)
+        # Voi ten sai, moi phep do van chay het va in ra bang "0 loi, khong
+        # gian doan": khong co node nao bi tat nen khong co gi de do.
+        echo "LOI: ten node khong biet: $TARGET (web01|web02|web03)" >&2
+        exit 1
+        ;;
 esac
 
 mkdir -p results/failover
@@ -44,6 +49,22 @@ docker compose ps --format '{{.Name}}: {{.Status}}' | sed 's/^/           /'
 sleep 5
 echo "[t=10s]  docker compose stop ${TARGET}"
 docker compose stop "$TARGET"
+
+# Chung minh node that da dung lai. Lenh stop tra ve thanh cong van co the di
+# qua mot container da o trang thai dung tu truoc, va khi do ca vong do chi la
+# ba node dang phuc vu binh thuong duoc ghi ten la "failover".
+for _ in 1 2 3 4 5; do
+    STATE="$(docker compose ps --format '{{.Name}} {{.State}}' \
+              | awk -v n="de07-${TARGET}" '$1 == n { print $2 }')"
+    if [ "$STATE" = "exited" ] || [ "$STATE" = "created" ]; then break; fi
+    sleep 1
+done
+if [ "$STATE" != "exited" ] && [ "$STATE" != "created" ]; then
+    echo "LOI: ${TARGET} van o trang thai '$STATE' sau khi stop, khong phai mot vong failover" >&2
+    docker compose start "$TARGET" >/dev/null 2>&1
+    exit 1
+fi
+echo "           ${TARGET} da dung (${STATE})"
 
 sleep "$RESTART_AFTER"
 echo "[t=$((10 + RESTART_AFTER))s] docker compose start ${TARGET}"

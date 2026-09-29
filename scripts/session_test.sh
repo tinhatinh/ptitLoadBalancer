@@ -31,9 +31,22 @@ else
 fi
 echo " Thuat toan load balancer: ${ALGO}"
 
-LB_ALGO_DIRECTIVE="$ALGO" docker compose up -d --force-recreate --no-deps lb01 >/dev/null 2>&1
-SESSION_STORE="$MODE" docker compose up -d web01 web02 web03 >/dev/null 2>&1
-sleep 8
+# Hai lenh nay truoc day nuot het loi. Chung that bai thi cum van chay cau hinh
+# cu, con file ket qua thi ghi ten thuat toan khong he duoc ap vao - phep do
+# "mat phien" khi do la do tren dinh kem ip_hash that.
+if ! LB_ALGO_DIRECTIVE="$ALGO" docker compose up -d --force-recreate --no-deps lb01 >/dev/null 2>&1; then
+    echo "LOI: khong dat duoc thuat toan $ALGO len load balancer" >&2; exit 1
+fi
+if ! SESSION_STORE="$MODE" docker compose up -d web01 web02 web03 >/dev/null 2>&1; then
+    echo "LOI: khong khoi dong lai duoc ba node voi SESSION_STORE=$MODE" >&2; exit 1
+fi
+echo -n "Cho cum san sang "
+for _ in $(seq 1 30); do
+    code="$(docker compose exec -T client01 curl -sk -m 3 -o /dev/null -w '%{http_code}'              "https://${LB_IP:-192.168.240.10}/healthz" 2>/dev/null || true)"
+    if [ "$code" = "200" ]; then echo " -> OK"; break; fi
+    echo -n "."; sleep 2
+done
+[ "$code" = "200" ] || { echo " -> KHONG DAT" >&2; exit 1; }
 
 {
     echo "# session_test mode=${MODE} stamp=${STAMP}"

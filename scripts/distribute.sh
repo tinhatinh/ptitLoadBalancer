@@ -23,6 +23,13 @@ for ((i = 1; i <= N; i++)); do
 done
 
 MISSING=$(( N - $(wc -l < "$RAW") ))
+if [ "$MISSING" -ge "$N" ]; then
+    # Khong lay duoc header nao: load balancer khong tra X-Node, hoac doan
+    # curl bi loi hoan toan. In ra "distribution:" rong roi exit 0 la dung
+    # mot phep do khong do duoc gi.
+    echo "LOI: khong lay duoc header X-Node nao tu $N request" >&2
+    exit 1
+fi
 
 {
     echo "algorithm=${ALG}"

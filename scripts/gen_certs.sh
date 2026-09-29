@@ -12,10 +12,28 @@ CERT_DIR="$ROOT/nginx/lb/certs"
 mkdir -p "$CERT_DIR"
 CERT_DIR="$(cd "$CERT_DIR" && (pwd -W 2>/dev/null || pwd))"
 
-if [ -f "$CERT_DIR/cluster.crt" ] && [ -f "$CERT_DIR/cluster.key" ]; then
-    echo "Da co san cluster.crt va cluster.key, bo qua."
+pair_ok() {
+    [ -s "$CERT_DIR/cluster.crt" ] && [ -s "$CERT_DIR/cluster.key" ] || return 1
+    # openssl req -newkey viet file key TRUOC roi moi ghi file cert, nen mot
+    # lan bi chen giua de lai cap key/cert khong khop nhau. Neu chi kiem tra "ca
+    # hai file deu ton tai" thi lan chay sau bo qua mai mai va nginx chi bao
+    # "SSL_CTX_use_PrivateKey_file failed", khong noi ro nguyen nhan.
+    [ "$(openssl x509 -noout -pubkey -in "$CERT_DIR/cluster.crt" 2>/dev/null | openssl md5)" = \
+      "$(openssl pkey -pubout -in "$CERT_DIR/cluster.key" 2>/dev/null | openssl md5)" ] || return 1
+    # Con hieu luc it nhat mot thang nua.
+    openssl x509 -checkend $(( 30 * 86400 )) -noout -in "$CERT_DIR/cluster.crt" >/dev/null 2>&1
+}
+
+if pair_ok; then
+    echo "Da co san cap chung chi hop le, bo qua."
+    chmod 600 "$CERT_DIR/cluster.key" 2>/dev/null || true
     exit 0
 fi
+
+if [ -f "$CERT_DIR/cluster.crt" ] || [ -f "$CERT_DIR/cluster.key" ]; then
+    echo "Cap chung chi cu hong hoac da het han, sinh lai."
+fi
+rm -f "$CERT_DIR/cluster.crt" "$CERT_DIR/cluster.key"
 
 openssl req -x509 -nodes -newkey rsa:2048 \
     -keyout "$CERT_DIR/cluster.key" \

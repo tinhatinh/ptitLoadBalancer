@@ -362,11 +362,20 @@ Phần này chỉ cần khi sửa `REPORT/*.md`. Ba bước:
 cd REPORT
 export BTL_TEMPLATE="/duong/dan/toi/ATTT-Mau-bao-cao-bai-thuc-hanh-TTCS.docx"
 python check_md.py                    # cau truc markdown
-python verify_numbers.py              # doi chieu so voi results/
-python analyze_bench.py all           # dung lai bench_summary.json
+python analyze_bench.py all           # dung bench_summary.json tu results/
+python make_charts.py                 # ve ba bieu do tu bench_summary.json
+python verify_numbers.py              # doi chieu so TRONG BANG va tinh anh
+                                      # khong cu hon du lieu no the hien
 python build_docx.py mo-dau.md chuong1.md chuong2.md chuong3.md ket-luan.md tai-lieu.md --out out.docx
 python finalize_word.py out.docx      # mo Word, thay marker danh muc, xuat PDF
 ```
+
+Thu tu tren la bat buoc: `verify_numbers.py` so thoi gian cua moi file trong
+`figures/` voi nguon cua no (`.puml`, `screenshots/`, `bench_summary.json`),
+nen chay `analyze_bench.py` roi mới chạy `make_charts.py`, neu khong bao cao se
+bi bao la bieu do cu. So in trong bang du doi chieu tung o; con so nam ben
+trong file PNG thi khong the doi chieu truc tiep, day la cach duy nhat phat
+hien chung bi cu.
 
 `BTL_TEMPLATE` là bắt buộc với hai bước cuối: mẫu báo cáo của học phần là file
 của trường, không đi kèm repo, và `build_docx.py` cần các style `BTL-H1`,
