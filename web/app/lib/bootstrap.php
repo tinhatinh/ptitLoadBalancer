@@ -137,14 +137,22 @@ function lookup_user(string $username): ?array
 
 function record_login_attempt(string $username, bool $success): void
 {
+    // login_audit dung kieu do dai co dinh (username 64, client_ip 45,
+    // node_name 32) va MariaDB chay STRICT_TRANS_TABLES: gia tri dai hon bi
+    // chan bang ERROR 1406 chu khong cat nguyen. Vi ham nay bat va nuot moi
+    // Throwable, mot doi tuong tan cong dung ten dang nhap 65 ky tu se khien
+    // dong nhat ky bien mat khong lai dau vet. Cat truoc khi ghi de dong do
+    // luan duoc luu.
+    $stmt_username = mb_substr($username, 0, 64);
+    $stmt_ip       = mb_substr(client_ip(), 0, 45);
+    $stmt_node     = substr(node_name(), 0, 32);
+
     try {
         $stmt = db()->prepare(
             'INSERT INTO login_audit (username, success, client_ip, node_name) VALUES (?, ?, ?, ?)'
         );
         $flag = (int) $success;
-        $node = node_name();
-        $ip   = client_ip();
-        $stmt->bind_param('siss', $username, $flag, $ip, $node);
+        $stmt->bind_param('siss', $stmt_username, $flag, $stmt_ip, $stmt_node);
         $stmt->execute();
     } catch (Throwable) {
         // Nhat ky khong duoc phep lam hong luong dang nhap.

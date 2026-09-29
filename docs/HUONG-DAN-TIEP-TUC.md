@@ -35,6 +35,15 @@ cp .env.example .env          # du gia tri dev, khong can sua
 Cổng trên máy của bạn: `http://localhost:8080` (chuyển hướng cưỡng bức sang
 HTTPS) và `https://localhost:8443`. Chứng chỉ tự ký, trình duyệt sẽ cảnh báo.
 
+Hai cổng đó **chỉ bind `127.0.0.1`**, nên từ máy khác trong cùng mạng bạn gọi
+không tới được. Đó là chủ ý (lab này dựng trên laptop cá nhân). Muốn mở cho cả
+mạng để demo, sửa `docker-compose.yml` bỏ tiền tố `127.0.0.1:` rồi
+`docker compose up -d --force-recreate lb01`.
+
+Cụm giờ đây tự xếp thứ tự khởi động: node chỉ lên sau khi Redis và MariaDB
+healthy, load balancer chỉ lên sau khi cả ba node healthy. Nếu một container
+kẹt `starting`, xem `docker compose ps` rồi `docker compose logs <tên>`.
+
 Tài khoản demo đã seed trong `mysql/init/01_schema.sql`. Cả ba dùng chung một
 mật khẩu lab, `Lab@De07`, không phải mật khẩu của ai và không dùng được ở đâu
 khác; cột `password_hash` chỉ chứa bcrypt.
@@ -243,6 +252,32 @@ cùng nội dung. Kết quả lưu trong `results/security/`.
 
 Đó là **kiểm tra cấu hình**, không phải thử nghiệm xâm nhập. Phần việc của bạn
 là biến một số dòng trong mục 3 ở trên thành bài kiểm tra có bằng chứng.
+
+### 4.1 Những cửa vừa đóng trong lượt soát cuối
+
+Đừng mất thời gian thử lại, nhưng hãy kiểm chứng rằng chúng đóng thật:
+
+- **Biến thể hoa/thường của tên đăng nhập.** Cột `users.username` mang
+  `COLLATE utf8mb4_bin` và `login.php` `trim()` trước khi truy vấn, nên
+  `DANHPT`, `dànhpt` và `danhpt ` không còn khớp với `danhpt`. Kiểm chứng:
+  `POST /login.php` với `username=DANHPT` và mật khẩu đúng phải trả 200
+  (từ chối), còn `danhpt` trả 302. Lưu ý `utf8mb4_bin` vẫn là kiểu PAD SPACE
+  trong MariaDB, nên cửa trailing-space đóng được là nhờ `trim()` ở tầng ứng
+  dụng, không phải nhờ collation.
+- **Mất dấu vết khi dò tài khoản.** `login_audit` chạy dưới
+  `STRICT_TRANS_TABLES`: username dài hơn 64 ký từng khiến INSERT báo lỗi
+  1406 và `record_login_attempt()` nuốt luôn, nghĩa là một chuỗi brute-force
+  với tên dài để lại **không có dòng nào**. Nay giá trị được cắt về đúng
+  chiều dài cột trước khi ghi. Kiểm chứng: gửi username 200 ký tự rồi
+  `SELECT id, CHAR_LENGTH(username) FROM login_audit ORDER BY id DESC LIMIT 1`.
+- **Đặc quyền của tài khoản ứng dụng.** `webapp` chỉ còn `SELECT, INSERT`
+  trên `de07_web` (xem `mysql/init/02_grants.sql`), nên một lỗi SQL injection
+  không còn DROP/ALTER được nữa. `SHOW GRANTS FOR 'webapp'@'%'` để đối chiếu.
+  Trên máy đã chạy từ trước, file này không tự chạy: phải áp thủ công.
+- **Phục hồi phiên TLS.** `ssl_session_tickets off`, và danh sách mật mã không
+  còn các bộ `ECDHE-ECDSA` vô dụng với chứng chỉ RSA.
+- **Redis** dùng `noeviction` thay vì `allkeys-lru`: đầy bộ nhớ sẽ báo lỗi ghi
+  chứ không âm thầm đá phiên đang sống.
 
 ## 5. Cách thêm một kiểm tra vào bộ hiện có
 

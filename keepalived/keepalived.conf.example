@@ -26,7 +26,9 @@ vrrp_instance VI_WEB {
 
     authentication {
         auth_type PASS
-        auth_pass CHANGE_ME
+        # keepalived cat VRRP simple password xuong 8 ky tu, dien 9 ky tu tro
+        # len la khong khoi dong duoc. Doi mat khau truoc khi dung that.
+        auth_pass Lab07key
     }
 
     ! Docker Desktop khong bao dam chuyen multicast, nen tren may ao hoa nay

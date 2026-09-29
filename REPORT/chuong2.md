@@ -29,7 +29,7 @@ Hệ quả kiểm chứng được bằng lệnh: gọi thẳng một node từ 
 [[TAB:dia-chi|Bảng địa chỉ và cổng của các thành phần]]
 tbl:
 | Thành phần | Container | Địa chỉ | Vai trò | Cổng công bố ra máy |
-| Bộ cân bằng tải | lb01 | 192.168.240.10 và 172.20.0.10 | nginx 1.27, TLS, chọn node | 8080, 8443 |
+| Bộ cân bằng tải | lb01 | 192.168.240.10 và 172.20.0.10 | nginx 1.27, TLS, chọn node | 127.0.0.1:8080 và 127.0.0.1:8443 |
 | Node web 1 | web01 | 172.20.0.11 | nginx và php-fpm 8.3 | không |
 | Node web 2 | web02 | 172.20.0.12 | nginx và php-fpm 8.3 | không |
 | Node web 3 | web03 | 172.20.0.13 | nginx và php-fpm 8.3 | không |
@@ -38,7 +38,9 @@ tbl:
 | Máy đo | client01 | 192.168.240.20 | curl, ab | không |
 #tc
 
-Chỉ `lb01` có cổng công bố ra máy chủ. Máy khách trong mạng nội bộ gọi tới 192.168.240.10, còn khi cần xem bằng trình duyệt thì gọi qua cổng 8443 của máy chủ.
+Chỉ `lb01` có cổng công bố ra máy chủ, và hai cổng đó chỉ mở trên `127.0.0.1` chứ không phải `0.0.0.0`: chứng chỉ tự ký cùng mật khẩu dev của lab không nên nghe lời gọi từ bất kỳ máy nào trong cùng mạng. Máy khách trong mạng nội bộ gọi tới 192.168.240.10, còn khi cần xem bằng trình duyệt thì gọi qua `https://localhost:8443`.
+
+Thứ tự khởi động được xếp bằng `depends_on` kèm `condition: service_healthy`. Mỗi node có một healthcheck gọi `/healthz` trên chính nó, và `lb01` chỉ được dựng lên sau khi cả ba node đều healthy; tới lượt mình, mỗi node chờ Redis và MariaDB. Không có ràng buộc này thì bộ cân bằng tải kịp khởi động sớm hơn node, và loạt request đầu tiên của một phép đo nhận 502 không liên quan gì đến nội dung đang đo.
 
 [[FIG:anh-hinh-01|Trạng thái cụm sau khi khởi động: bảy container đang chạy và chỉ lb01 có cổng công bố ra máy chủ|16]]
 
@@ -178,7 +180,7 @@ session.save_handler = redis
 session.save_path    = "tcp://redis01:6379?auth=...&database=0&prefix=de07:"
 ```
 
-Redis chạy với `--requirepass`, `--maxmemory 128mb`, `--maxmemory-policy allkeys-lru` và `--save ""`, tức là dữ liệu phiên chỉ nằm trong bộ nhớ và không ghi đĩa. Đây là lựa chọn đúng cho đối tượng phiên: phiên có vòng đời ngắn, mất thì đăng nhập lại, đổi lại không phải chịu độ trễ ghi đĩa.
+Redis chạy với `--requirepass`, `--maxmemory 128mb`, `--maxmemory-policy noeviction` và `--save ""`, tức là dữ liệu phiên chỉ nằm trong bộ nhớ và không ghi đĩa. Đây là lựa chọn đúng cho đối tượng phiên: phiên có vòng đời ngắn, mất thì đăng nhập lại, đổi lại không phải chịu độ trễ ghi đĩa. Chính sách `noeviction` thay vì `allkeys-lru` là có chủ đích: `allkeys-lru` coi mọi khóa như nhau, nên khi đầy bộ nhớ nó loại cả phiên đang hoạt động và người dùng bị đăng xuất không một dấu hiệu lỗi; `noeviction` khiến thao tác ghi thất bại và để lại dấu vết có thể phát hiện được.
 
 Các cờ cookie đặt tại node nên mọi node gửi về cùng một chính sách: `session.cookie_httponly`, `session.cookie_secure`, `session.cookie_samesite = Lax`, `session.use_strict_mode = 1` và `session.sid_length = 32`.
 

@@ -7,7 +7,15 @@ SET NAMES utf8mb4;
 
 CREATE TABLE IF NOT EXISTS users (
     id            INT AUTO_INCREMENT PRIMARY KEY,
-    username      VARCHAR(64)  NOT NULL UNIQUE,
+    -- COLLATE utf8mb4_bin la co y. Collation mac dinh cua MariaDB 11.4 la
+    -- utf8mb4_uca1400_ai_ci: khong phan biet hoa thuong, khong phan biet dau
+    -- va bo khoang trang duoi cung. Khi do 'DANHPT', 'dànhpt' va 'danhpt '
+    -- cung tra ve dong cua 'danhpt', nghia la mot tai khoan co the dang nhap
+    -- bang bien the cua ten khac. Dinh danh truc thuoc thi phai so sanh
+    -- nguyen van; mat khau van duoc kiem tra bang password_verify nen khong
+    -- bi anh huong.
+    username      VARCHAR(64)  CHARACTER SET utf8mb4 COLLATE utf8mb4_bin
+                               NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     full_name     VARCHAR(128) NOT NULL,
     role          ENUM('admin','member') NOT NULL DEFAULT 'member',
@@ -20,8 +28,7 @@ CREATE TABLE IF NOT EXISTS news (
     summary      VARCHAR(400) NOT NULL,
     body         TEXT NOT NULL,
     author       VARCHAR(128) NOT NULL,
-    published_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    views        INT NOT NULL DEFAULT 0
+    published_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Nhat ky dang nhap. Moi node ghi ve cung mot bang nen sau khi mot node

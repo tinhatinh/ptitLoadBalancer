@@ -27,4 +27,11 @@ openssl req -x509 -nodes -newkey rsa:2048 \
     -addext "keyUsage=digitalSignature,keyEncipherment" \
     -addext "extendedKeyUsage=serverAuth"
 
+# Khoa ngam dinh sinh ra theo umask cua he dieu hanh, tren may nay la 0644:
+# bat ky tai khoan nao doc duoc danh sach file nam trong thu muc deu co the
+# gia dang load balancer. Repo khong theo doi thu muc nay nhung file van ton
+# tai tren may chay lab.
+chmod 600 "$CERT_DIR/cluster.key"
+chmod 644 "$CERT_DIR/cluster.crt"
+
 echo "Da sinh chung chi tai $CERT_DIR"

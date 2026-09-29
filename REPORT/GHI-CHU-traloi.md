@@ -146,3 +146,63 @@ Cũng trong lượt soát này, phép kiểm định số vòng của failover �
 dòng thiếu dữ liệu trong bảng 12 vòng trước đây bị dụng cụ tổng hợp loại im
 lặng, còn `verify_numbers.py` chỉ yêu cầu "từ 10 vòng". Nay bắt buộc đúng 12 và
 báo lỗi nếu có dòng bị loại.
+
+## 6. Lỗi tầng hạ tầng và cơ sở dữ liệu tìm ra ở lượt soát cuối
+
+Các lỗi dưới đây chỉ lộ ra khi thử đường đi ngược, tức tắt hẳn một dịch vụ hoặc
+đưa dữ liệu ngoài biên độ, chứ không lộ ra khi hệ thống chạy đúng.
+
+- **Redis đặt `allkeys-lru` cho kho phiên.** Khoá phiên và khoá cache bị đối xử
+  như nhau, nên khi đầy bộ nhớ Redis loại cả phiên đang hoạt động và người dùng
+  bị đăng xuất không kèm lỗi nào. Đổi sang `noeviction`: thà ghi thất bại và
+  thấy lỗi còn hơn mất phiên trong im lặng.
+- **Load balancer không chờ node.** `depends_on` dạng ngắn chỉ sắp thứ tự tạo
+  container, không chờ sẵn sàng, và node web không có healthcheck. Kết quả là
+  loạt request đầu sau `docker compose up` có thể nhận 502. Nay mỗi node có
+  healthcheck trên `/healthz` và `lb01` chờ cả ba healthy.
+- **Chuyển hướng 301 mất cổng.** `return 301 https://$host$request_uri` biến
+  `http://localhost:8080` thành `https://localhost/`, nơi không có gì nghe, vì
+  HTTPS được công bố ở 8443. Đã sửa bằng `map` chỉ chấp nhận đúng hai giá trị
+  Host của máy chủ, không lấy chuỗi Host tuỳ ý của khách hàng vì cách đó mở thêm
+  một cổng chuyển hướng qua header Host.
+- **Cổng của load balancer binds trên mọi giao diện.** Nghĩa là mọi máy trong
+  cùng mạng gọi được vào một load balancer tự ký mang mật khẩu dev. Nay bind
+  `127.0.0.1`.
+- **Tên đăng nhập không phân biệt hoa thường.** Cột `username` thừa hưởng
+  `utf8mb4_uca1400_ai_ci` của MariaDB 11.4, nên `DANHPT` và `dànhpt` cùng trả về
+  dòng của `danhpt`: một tài khoản đăng nhập được bằng biến thể tên khác. Đã
+  chuyển sang `utf8mb4_bin` và kiểm chứng: `DANHPT` với mật khẩu đúng bị từ chối.
+- **Nhật ký đăng nhập mất dấu vết đúng chỗ cần nhất.** `login_audit.username`
+  dài 64 ký tự và MariaDB chạy `STRICT_TRANS_TABLES`; username 65 ký tự trở lên
+  làm INSERT báo lỗi 1406, còn `record_login_attempt()` nuốt mọi exception để
+  không phá luồng đăng nhập. Hệ quả là một chuỗi brute-force dùng tên dài để lại
+  không một dòng trong `/audit.php`. Nay giá trị được cắt đúng chiều dài cột
+  trước khi ghi.
+- **Tài khoản ứng dụng có `ALL PRIVILEGES`.** Image MariaDB cấp toàn quyền trên
+  schema cho `webapp`, trong khi mã nguồn chỉ chạy hai câu SELECT và một câu
+  INSERT. Thêm `mysql/init/02_grants.sql` rút về `SELECT, INSERT`.
+- **Cột `news.views` không bao giờ được ghi.** Trang chủ in "%d lượt xem" với
+  giá trị luôn bằng 0. Đã bỏ cả cột lẫn dòng hiển thị, thay vì giữ một con số
+  không có nguồn.
+- **Mốc thời điểm trong nhật ký là UTC mà không ghi rõ trục.** Container
+  MariaDB chạy UTC, người đọc ở Việt Nam lệch bảy giờ. Tiêu đề cột nay là
+  "Thời điểm (UTC)".
+- **`ssl_session_tickets` còn bật**, cho phép phục hồi phiên không qua bắt tay
+  mà không có đường thu hồi; chứng chỉ là RSA nên các bộ mật mã ECDSA trong danh
+  sách không bao giờ được chọn.
+- **`gen_certs.sh` không đặt quyền 600 cho khoá riêng.** Trên Linux file sinh ra
+  theo umask của hệ thống tức 0644; trên Windows thuộc tính này không có ý nghĩa
+  nên không kiểm chứng bằng mắt được.
+- **File keepalived mẫu không khởi động được**: `auth_pass CHANGE_ME` dài 9 ký
+  tự trong khi keepalived giới hạn mật khẩu VRRP ở 8 ký tự. README của thư mục
+  này nêu một tên directive không có trong file và mâu thuẫn với chính file về
+  multicast so với unicast.
+
+Hai điểm về phương pháp đáng nói hơn cả danh sách trên. Một là
+`verify_numbers.py` từng in "KHOP" trong khi báo cáo tự mâu thuẫn (193 ở phần
+văn, 194 ở caption hình), vì hàm kiểm tra chỉ cần *một* trong các cách diễn đạt
+là khớp; đã thêm `expect_every()` bắt mọi chỗ phải nhất quán, và đã thử lại bằng
+cách cố tình đặt một giá trị sai xem nó có bị bắt không. Hai là ảnh chụp màn
+hình cũng là bằng chứng và cũng sai được: ảnh 18 chiếu 193 cạnh caption 194, và
+lần dựng lại đầu tiên vẫn ra ảnh cũ vì bỏ qua bước `crop_shots.py` (bài dựng lấy
+ảnh từ `figures/`, không phải `screenshots/`).

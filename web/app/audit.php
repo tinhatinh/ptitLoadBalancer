@@ -24,7 +24,10 @@ try {
 }
 
 $body = '<div class="card"><h2>Nhật ký đăng nhập (50 bản ghi gần nhất)</h2>'
-    . '<table><tr><th>Thời điểm</th><th>Tên đăng nhập</th><th>Kết quả</th><th>IP khách hàng</th><th>Ghi từ node</th></tr>';
+    // Container MariaDB chay UTC (@@time_zone = SYSTEM, khong dat TZ trong
+    // compose), nen phai ghi ro truc do: dong nhat ky luc 10:58 la 17:58 theo
+    // dong ho cua nguoi dung o Viet Nam.
+    . '<table><tr><th>Thời điểm (UTC)</th><th>Tên đăng nhập</th><th>Kết quả</th><th>IP khách hàng</th><th>Ghi từ node</th></tr>';
 
 foreach ($rows as $r) {
     $body .= sprintf(

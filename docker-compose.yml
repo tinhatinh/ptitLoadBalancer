@@ -26,21 +26,31 @@ services:
       backend:
         ipv4_address: 172.20.0.10
     ports:
-      - "${LB_HTTP_PORT:-8080}:80"
-      - "${LB_HTTPS_PORT:-8443}:443"
+      # Chi gan vong loopback. De 0.0.0.0 thi may khac trong cung mang
+      # (vi du mang truong) cham duoc thang load balancer chung chi tu ky.
+      # Doi thanh "8080:80" neu muon demo tu may khac.
+      - "127.0.0.1:${LB_HTTP_PORT:-8080}:80"
+      - "127.0.0.1:${LB_HTTPS_PORT:-8443}:443"
     environment:
       LB_ALGO_DIRECTIVE: "${LB_ALGO_DIRECTIVE:-least_conn;}"
       MAX_FAILS: "${MAX_FAILS:-2}"
       FAIL_TIMEOUT: "${FAIL_TIMEOUT:-10s}"
       BACKEND_PORT: "80"
+      # Hai gia tri nay vao map chuyen huong o default.conf.template, de 301
+      # giu dung cong HTTPS ma Docker cong bo.
+      LB_HTTP_PORT: "${LB_HTTP_PORT:-8080}"
+      LB_HTTPS_PORT: "${LB_HTTPS_PORT:-8443}"
     volumes:
       - ./nginx/lb/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/lb/templates:/etc/nginx/templates:ro
       - ./nginx/lb/certs:/etc/nginx/certs:ro
     depends_on:
-      - web01
-      - web02
-      - web03
+      web01:
+        condition: service_healthy
+      web02:
+        condition: service_healthy
+      web03:
+        condition: service_healthy
     restart: unless-stopped
 
   web01:
@@ -61,6 +71,21 @@ services:
       REDIS_PORT: "6379"
       REDIS_PASSWORD: "${REDIS_PASSWORD:-RedisPass0}"
       SESSION_STORE: "${SESSION_STORE:-redis}"
+    # Do den luong van hanh cua node: nginx tren node phai tra loi duoc
+    # /healthz thi load balancer moi co ly do de cho rang node ay dang song.
+    # Node cung khong co ly do de dung neu Redis va MariaDB chua san sang.
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://127.0.0.1/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+    depends_on:
+      redis01:
+        condition: service_healthy
+      mysql01:
+        condition: service_healthy
+    restart: unless-stopped
 
   web02:
     build: ./web
@@ -80,6 +105,21 @@ services:
       REDIS_PORT: "6379"
       REDIS_PASSWORD: "${REDIS_PASSWORD:-RedisPass0}"
       SESSION_STORE: "${SESSION_STORE:-redis}"
+    # Do den luong van hanh cua node: nginx tren node phai tra loi duoc
+    # /healthz thi load balancer moi co ly do de cho rang node ay dang song.
+    # Node cung khong co ly do de dung neu Redis va MariaDB chua san sang.
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://127.0.0.1/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+    depends_on:
+      redis01:
+        condition: service_healthy
+      mysql01:
+        condition: service_healthy
+    restart: unless-stopped
 
   web03:
     build: ./web
@@ -99,6 +139,21 @@ services:
       REDIS_PORT: "6379"
       REDIS_PASSWORD: "${REDIS_PASSWORD:-RedisPass0}"
       SESSION_STORE: "${SESSION_STORE:-redis}"
+    # Do den luong van hanh cua node: nginx tren node phai tra loi duoc
+    # /healthz thi load balancer moi co ly do de cho rang node ay dang song.
+    # Node cung khong co ly do de dung neu Redis va MariaDB chua san sang.
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://127.0.0.1/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+    depends_on:
+      redis01:
+        condition: service_healthy
+      mysql01:
+        condition: service_healthy
+    restart: unless-stopped
 
   redis01:
     image: redis:7-alpine
@@ -110,8 +165,12 @@ services:
       redis-server
       --requirepass "${REDIS_PASSWORD:-RedisPass0}"
       --maxmemory 128mb
-      --maxmemory-policy allkeys-lru
+      --maxmemory-policy noeviction
       --save ""
+    # noeviction la co y: day la kho luu phien, khong phai cache. Voi
+    # allkeys-lru, khi day bo nho Redis se im lang loai bo phien dang song va
+    # nguoi dung bi dang xuat ma khong co bat ky bao loi nao. noeviction chuyen
+    # hau qua thanh loi ghi co the phat hien duoc.
     healthcheck:
       test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-RedisPass0}", "ping"]
       interval: 10s

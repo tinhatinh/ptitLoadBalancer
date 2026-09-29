@@ -9,7 +9,7 @@ $broken = false;
 
 try {
     $res   = db()->query(
-        'SELECT id, title, summary, author, published_at, views FROM news ORDER BY published_at DESC'
+        'SELECT id, title, summary, author, published_at FROM news ORDER BY published_at DESC'
     );
     $items = $res->fetch_all(MYSQLI_ASSOC);
 } catch (Throwable) {
@@ -25,12 +25,11 @@ if ($broken) {
 
 foreach ($items as $row) {
     $body .= sprintf(
-        '<article class="card"><h2>%s</h2><p>%s</p><p class="meta">%s &middot; %s &middot; %d lượt xem</p></article>',
+        '<article class="card"><h2>%s</h2><p>%s</p><p class="meta">%s &middot; %s</p></article>',
         e($row['title']),
         e($row['summary']),
         e($row['author']),
-        e($row['published_at']),
-        (int) $row['views']
+        e($row['published_at'])
     );
 }
 
